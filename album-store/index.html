@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FREEZE 5 — Album Store</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    
+    .album-meta {
+      color: #888;
+      font-size: 0.95rem;
+    }
+    
+    .album-art {
+      width: 100%;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      border-radius: 16px;
+      margin-bottom: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    
+    .price-section {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px;
+      background: #111;
+      border-radius: 12px;
+      border: 1px solid #222;
+    }
+    
+    .price {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    .price-note {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+    
+    .buy-btn {
+      display: inline-block;
+      background: #fff;
+      color: #000;
+      padding: 16px 48px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .buy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255,255,255,0.2);
+    }
+    
+    .tracklist {
+      margin-bottom: 40px;
+    }
+    
+    .tracklist h2 {
+      font-size: 1.1rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+    }
+    
+    .track {
+      display: flex;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    
+    .track:last-child { border-bottom: none; }
+    
+    .track-num {
+      width: 30px;
+      color: #444;
+      font-size: 0.9rem;
+    }
+    
+    .track-name {
+      flex: 1;
+      font-size: 1rem;
+    }
+    
+    .track-duration {
+      color: #555;
+      font-size: 0.9rem;
+    }
+    
+    .track-preview {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid #333;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+      margin-left: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    
+    .track-preview:hover {
+      border-color: #fff;
+      background: #222;
+    }
+    
+    .track-preview svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+    
+    .format-info {
+      text-align: center;
+      color: #555;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 30px;
+      border-top: 1px solid #1a1a1a;
+      color: #444;
+      font-size: 0.85rem;
+    }
+    
+    footer a { color: #666; text-decoration: none; }
+    footer a:hover { color: #fff; }
+    
+    .countdown {
+      margin-top: 20px;
+      padding: 15px;
+      background: #111;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+    }
+    
+    .countdown.visible { display: block; }
+    
+    .countdown-label {
+      font-size: 0.8rem;
+      color: #666;
+      margin-bottom: 5px;
+    }
+    
+    .countdown-timer {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>FREEZE 5</h1>
+      <p class="album-meta">7 Tracks · 2026</p>
+    </header>
+    
+    <div class="album-art">❄️</div>
+    
+    <div class="price-section">
+      <div class="price">$12</div>
+      <p class="price-note">Full album download • WAV format</p>
+      <a href="YOUR_STRIPE_PAYMENT_LINK_HERE" class="buy-btn">Buy Now</a>
+      
+      <div class="countdown" id="countdown">
+        <div class="countdown-label">Limited time offer ends in:</div>
+        <div class="countdown-timer" id="timer">--:--:--</div>
+      </div>
+    </div>
+    
+    <div class="tracklist">
+      <h2>Tracklist</h2>
+      
+      <div class="track">
+        <span class="track-num">01</span>
+        <span class="track-name">Freeze 5 (Intro)</span>
+        <span class="track-duration">--:--</span>
+        <button class="track-preview" onclick="previewTrack(1)">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+      </div>
+      
+      <div class="track">
+        <span class="track-num">02</span>
+        <span class="track-name">Track 02</span>
+        <span class="track-duration">--:--</span>
+        <button class="track-preview" onclick="previewTrack(2)">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+      </div>
+      
+      <div class="track">
+        <span class="track-num">03</span>
+        <span class="track-name">Track 03</span>
+        <span class="track-duration">--:--</span>
+        <button class="track-preview" onclick="previewTrack(3)">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+      </div>
+      
+      <div class="track">
+        <span class="track-num">04</span>
+        <span class="track-name">Track 04</span>
+        <span class="track-duration">--:--</span>
+        <button class="track-preview" onclick="previewTrack(4)">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+      </div>
+      
+      <div class="track">
+        <span class="track-num">05</span>
+        <span class="track-name">Track 05</span>
+        <span class="track-duration">--:--</span>
+        <button class="track-preview" onclick="previewTrack(5)">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+      </div>
+      
+      <div class="track">
+        <span class="track-num">06</span>
+        <span class="track-name">Track 06</span>
+        <span class="track-duration">--:--</span>
+        <button class="track-preview" onclick="previewTrack(6)">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+      </div>
+      
+      <div class="track">
+        <span class="track-num">07</span>
+        <span class="track-name">Track 07 (Outro)</span>
+        <span class="track-duration">--:--</span>
+        <button class="track-preview" onclick="previewTrack(7)">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+      </div>
+    </div>
+    
+    <p class="format-info">
+      Instant download after purchase<br>
+      Files delivered to your email<br>
+      24/7 support
+    </p>
+    
+    <footer>
+      <p>Powered by <a href="#">Stripe</a></p>
+    </footer>
+  </div>
+  
+  <script>
+    let currentAudio = null;
+    
+    function previewTrack(num) {
+      const trackNames = [
+        'Freeze 5 (Intro)',
+        'Track 02',
+        'Track 03',
+        'Track 04',
+        'Track 05',
+        'Track 06',
+        'Track 07 (Outro)'
+      ];
+      
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+        return;
+      }
+      
+      // Replace with your actual audio file URLs
+      const audioSrc = `tracks/track-${String(num).padStart(2, '0')}.wav`;
+      
+      currentAudio = new Audio(audioSrc);
+      currentAudio.play();
+      currentAudio.onended = () => { currentAudio = null; };
+    }
+    
+    // Optional: countdown timer
+    // Uncomment to enable
+    /*
+    const endTime = new Date();
+    endTime.setHours(endTime.getHours() + 24);
+    
+    function updateTimer() {
+      const now = new Date();
+      const diff = endTime - now;
+      
+      if (diff <= 0) {
+        document.getElementById('timer').textContent = 'EXPIRED';
+        return;
+      }
+      
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      document.getElementById('timer').textContent = 
+        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+    
+    setInterval(updateTimer, 1000);
+    document.getElementById('countdown').classList.add('visible');
+    */
+  </script>
+</body>
+</html>
