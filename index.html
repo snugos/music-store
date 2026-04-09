@@ -8,58 +8,59 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #09090b; color: #fff; font-family: -apple-system, BlinkMacSystemFont, sans-serif; min-height: 100vh; }
     .container { max-width: 480px; margin: 0 auto; padding: 4rem 1.5rem; }
-    img { width: 100%; border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); margin-bottom: 2.5rem; }
-    h1 { font-size: 3rem; font-weight: 900; letter-spacing: -0.05em; margin-bottom: 0.25rem; }
+    img { width: 100%; border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+    h1 { font-size: 3.5rem; font-weight: 900; letter-spacing: -0.05em; margin-bottom: 0.25rem; margin-top: 1.5rem; }
     .artist { color: #a1a1aa; font-size: 1.125rem; margin-bottom: 0.25rem; }
     .meta { color: #71717a; font-size: 0.875rem; margin-bottom: 2.5rem; }
+    .section { margin-bottom: 1.5rem; }
     label { display: block; font-size: 0.875rem; font-weight: 500; color: #d4d4d8; margin-bottom: 0.5rem; }
     .hint { color: #71717a; font-weight: 400; }
     input[type="email"] { width: 100%; background: #18181b; border: 1px solid #3f3f46; border-radius: 0.5rem; padding: 0.75rem 1rem; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.2s; }
     input[type="email"]:focus { border-color: #fff; }
-    input[type="email"]::placeholder { color: #71717a; }
-    .price-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
-    .price-btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s; background: #27272a; color: #d4d4d8; }
+    .price-grid { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+    .price-btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; font-size: 0.875rem; background: #27272a; color: #d4d4d8; }
     .price-btn:hover { background: #3f3f46; }
     .price-btn.active { background: #fff; color: #000; }
     .price-btn.adjust { padding: 0.5rem 0.75rem; }
-    .current-price { display: flex; align-items: center; padding: 0.5rem 1rem; background: #18181b; border-radius: 0.5rem; font-family: monospace; font-size: 1.25rem; }
-    .cd-toggle { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; margin-top: 0.5rem; }
-    .cd-toggle input { width: 1.25rem; height: 1.25rem; accent-color: #fff; }
-    .cd-toggle span { color: #d4d4d8; }
-    .error { color: #f87171; font-size: 0.875rem; margin-top: 0.5rem; }
-    .checkout-btn { width: 100%; background: #fff; color: #000; font-weight: 700; font-size: 1.125rem; padding: 1rem; border-radius: 0.75rem; border: none; cursor: pointer; margin-top: 1.5rem; transition: opacity 0.2s; }
-    .checkout-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .alt-toggle { width: 100%; background: none; border: none; color: #71717a; font-size: 0.875rem; cursor: pointer; padding: 0.5rem; }
+    .current-price { padding: 0.5rem 1rem; background: #27272a; border-radius: 0.5rem; font-family: monospace; font-size: 1.25rem; }
+    .cd-toggle { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; margin-top: 0.75rem; }
+    .cd-toggle input { width: 1.125rem; height: 1.125rem; accent-color: #fff; }
+    .stripe-btn { width: 100%; background: #fff; color: #000; font-weight: 700; font-size: 1.125rem; padding: 1rem; border: none; border-radius: 0.75rem; cursor: pointer; margin-top: 1.25rem; transition: background 0.15s; }
+    .stripe-btn:hover { background: #e4e4e7; }
+    .stripe-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .alt-toggle { width: 100%; color: #71717a; font-size: 0.875rem; background: none; border: none; cursor: pointer; margin-top: 0.75rem; }
     .alt-toggle:hover { color: #a1a1aa; }
-    .alt-methods { background: #18181b; border: 1px solid #27272a; border-radius: 0.75rem; padding: 1.25rem; margin-top: 1rem; }
-    .alt-methods p { color: #a1a1aa; font-size: 0.875rem; margin-bottom: 0.5rem; }
-    .alt-methods .addr { font-family: monospace; color: #fff; margin-bottom: 1rem; }
-    .alt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-    .alt-box { background: #27272a; border-radius: 0.5rem; padding: 0.75rem; }
-    .alt-box .label { color: #71717a; font-size: 0.75rem; margin: 0; }
-    .alt-box .value { font-weight: 600; font-size: 0.875rem; margin-top: 0.25rem; }
-    .alt-note { color: #52525b; font-size: 0.75rem; margin-top: 1rem; }
-    footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #27272a; }
-    footer p { color: #71717a; font-size: 0.875rem; }
-    footer a { color: #a1a1aa; text-decoration: underline; }
-    footer a:hover { color: #fff; }
+    .alt-section { background: #18181b; border: 1px solid #27272a; border-radius: 0.75rem; padding: 1.25rem; margin-top: 0.75rem; }
+    .cashapp-btn { display: block; width: 100%; background: #00D632; color: #000; font-weight: 700; font-size: 1.125rem; padding: 1rem; border: none; border-radius: 0.75rem; cursor: pointer; text-align: center; text-decoration: none; transition: background 0.15s; margin-bottom: 1rem; }
+    .cashapp-btn:hover { background: #00b82d; }
+    .alt-divider { border-top: 1px solid #27272a; margin-top: 1rem; padding-top: 1rem; }
+    .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.875rem; }
+    .pay-box { background: #27272a; border-radius: 0.5rem; padding: 0.75rem; }
+    .pay-label { color: #71717a; }
+    .pay-handle { font-weight: 600; margin-top: 0.125rem; }
+    .alt-note { color: #52525b; font-size: 0.75rem; margin-top: 0.5rem; }
+    .error { color: #f87171; font-size: 0.875rem; margin-top: 0.5rem; }
+    .footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #27272a; }
+    .footer p { color: #71717a; font-size: 0.875rem; }
+    .footer a { color: #a1a1aa; text-decoration: underline; }
+    .footer a:hover { color: #fff; }
   </style>
 </head>
 <body>
   <div class="container">
-    <img src="/listen/album-cover.jpg" alt="LISTEN cover" />
+    <img src="https://fonk.zo.space/listen/album-cover.jpg" alt="LISTEN cover" />
     <h1>LISTEN</h1>
     <p class="artist">Snugsworth</p>
-    <p class="meta">9 tracks &nbsp;·&nbsp; Digital Download</p>
+    <p class="meta">9 tracks · Digital Download</p>
 
-    <div>
+    <div class="section">
       <label for="email">Your email</label>
       <input type="email" id="email" placeholder="you@email.com" />
     </div>
 
-    <div style="margin-top: 1.5rem;">
+    <div class="section">
       <label>Choose your price <span class="hint">(min $5)</span></label>
-      <div class="price-btns">
+      <div class="price-grid">
         <button class="price-btn" data-amt="5">$5</button>
         <button class="price-btn" data-amt="10">$10</button>
         <button class="price-btn" data-amt="15">$15</button>
@@ -72,94 +73,112 @@
       </div>
     </div>
 
-    <div id="cdSection" style="margin-top: 1rem; display:none;">
+    <div class="section" id="cdSection" style="display:none">
       <label class="cd-toggle">
-        <input type="checkbox" id="cdAdd" />
-        <span>Add Compact Disc (CD) &nbsp;—&nbsp; +$10</span>
+        <input type="checkbox" id="cdCheck" />
+        <span>Add Compact Disc (CD) — +$10</span>
       </label>
     </div>
 
-    <p class="error" id="errorMsg" style="display:none;"></p>
+    <p class="error" id="errorMsg" style="display:none"></p>
 
-    <button class="checkout-btn" id="checkoutBtn">Pay $5 with Stripe</button>
+    <button class="stripe-btn" id="stripeBtn">Pay $5 with Stripe</button>
+    <button class="alt-toggle" id="altToggle">Show CashApp / Venmo</button>
 
-    <button class="alt-toggle" id="altToggle">Show CashApp / Venmo / Other</button>
-    <div id="altMethods" style="display:none;">
-      <div class="alt-methods">
-        <p>Send payment and email your receipt to:</p>
-        <p class="addr">snugsworth@gmail.com</p>
-        <div class="alt-grid">
-          <div class="alt-box">
-            <p class="label">Venmo</p>
-            <p class="value">@snugsworth</p>
+    <div class="alt-section" id="altMethods" style="display:none">
+      <p style="color:#a1a1aa;font-size:0.875rem;margin-bottom:0.75rem">Pay directly with CashApp — opens the app with your amount pre-filled</p>
+      <a class="cashapp-btn" id="cashappLink" href="#" target="_blank">Pay $<span id="cashTotal">5</span> with CashApp</a>
+      <div class="alt-divider">
+        <p style="color:#71717a;font-size:0.875rem;margin-bottom:0.5rem">Or send manually and email your receipt:</p>
+        <div class="pay-grid">
+          <div class="pay-box">
+            <p class="pay-label">Venmo</p>
+            <p class="pay-handle">@snugsworth</p>
           </div>
-          <div class="alt-box">
-            <p class="label">CashApp</p>
-            <p class="value">$snugsworth</p>
+          <div class="pay-box">
+            <p class="pay-label">CashApp</p>
+            <p class="pay-handle">$snugsworth</p>
           </div>
         </div>
-        <p class="alt-note">Include your email in the note. You'll receive the download link within 24 hrs.</p>
+        <p class="alt-note">Include your email in the note. You will receive the download link within 24 hrs.</p>
       </div>
     </div>
 
-    <footer>
-      <p>Produced by <a href="https://genius.com/artists/Snugsworth" target="_blank">Snugsworth</a> &nbsp;·&nbsp; Co-produced Shabba by A$AP Ferg ft. A$AP Rocky</p>
-    </footer>
+    <div class="footer">
+      <p>Produced by <a href="https://genius.com/artists/Snugsworth" target="_blank">Snugsworth</a> · Co-produced Shabba by A$AP Ferg ft. A$AP Rocky</p>
+    </div>
   </div>
 
   <script>
     let amount = 5;
     let hasCD = false;
-    const emailInput = document.getElementById('email');
-    const errorMsg = document.getElementById('errorMsg');
-    const checkoutBtn = document.getElementById('checkoutBtn');
-    const cdSection = document.getElementById('cdSection');
-    const cdAdd = document.getElementById('cdAdd');
+    let loading = false;
 
-    function updatePrice() {
-      document.getElementById('curPrice').textContent = '$' + amount;
-      const total = amount + (hasCD && amount >= 15 ? 10 : 0);
-      checkoutBtn.textContent = 'Pay $' + total + ' with Stripe';
-      cdSection.style.display = amount >= 15 ? 'block' : 'none';
-      if (amount < 15) { hasCD = false; cdAdd.checked = false; }
-      document.querySelectorAll('.price-btn[data-amt]').forEach(b => {
-        b.classList.toggle('active', parseInt(b.dataset.amt) === amount);
-      });
+    const emailEl = document.getElementById('email');
+    const curPriceEl = document.getElementById('curPrice');
+    const stripeBtnEl = document.getElementById('stripeBtn');
+    const errorEl = document.getElementById('errorMsg');
+    const cdSectionEl = document.getElementById('cdSection');
+    const cdCheckEl = document.getElementById('cdCheck');
+    const altToggleEl = document.getElementById('altToggle');
+    const altMethodsEl = document.getElementById('altMethods');
+    const cashappLinkEl = document.getElementById('cashappLink');
+    const cashTotalEl = document.getElementById('cashTotal');
+    const priceBtns = document.querySelectorAll('.price-btn[data-amt]');
+
+    function total() { return amount + (hasCD && amount >= 15 ? 10 : 0); }
+
+    function updateUI() {
+      curPriceEl.textContent = '$' + amount;
+      stripeBtnEl.textContent = 'Pay $' + total() + ' with Stripe';
+      cdSectionEl.style.display = amount >= 15 ? 'block' : 'none';
+      cashTotalEl.textContent = total();
+      cashappLinkEl.href = 'https://cash.app/$snugsworth/' + total();
+      priceBtns.forEach(b => b.classList.toggle('active', parseInt(b.dataset.amt) === amount));
     }
 
-    document.querySelectorAll('.price-btn[data-amt]').forEach(btn => {
-      btn.addEventListener('click', () => { amount = parseInt(btn.dataset.amt); updatePrice(); });
+    priceBtns.forEach(btn => {
+      btn.addEventListener('click', () => { amount = parseInt(btn.dataset.amt); updateUI(); });
     });
-    document.getElementById('dec').addEventListener('click', () => { amount = Math.max(5, amount - 1); updatePrice(); });
-    document.getElementById('inc').addEventListener('click', () => { amount++; updatePrice(); });
-    cdAdd.addEventListener('change', () => { hasCD = cdAdd.checked; updatePrice(); });
-    updatePrice();
+    document.getElementById('dec').addEventListener('click', () => { amount = Math.max(5, amount - 1); updateUI(); });
+    document.getElementById('inc').addEventListener('click', () => { amount++; updateUI(); });
+    cdCheckEl.addEventListener('change', e => { hasCD = e.target.checked; updateUI(); });
 
-    checkoutBtn.addEventListener('click', async () => {
-      const email = emailInput.value.trim();
-      if (!email) {
-        errorMsg.textContent = 'Enter your email to continue'; errorMsg.style.display = 'block'; return;
+    altToggleEl.addEventListener('click', () => {
+      const shown = altMethodsEl.style.display !== 'none';
+      altMethodsEl.style.display = shown ? 'none' : 'block';
+      altToggleEl.textContent = shown ? 'Show CashApp / Venmo' : 'Hide CashApp / Venmo';
+    });
+
+    stripeBtnEl.addEventListener('click', async () => {
+      if (!emailEl.value) {
+        errorEl.textContent = 'Enter your email to continue';
+        errorEl.style.display = 'block';
+        return;
       }
-      checkoutBtn.disabled = true; checkoutBtn.textContent = 'Redirecting...';
-      errorMsg.style.display = 'none';
+      errorEl.style.display = 'none';
+      loading = true;
+      stripeBtnEl.disabled = true;
+      stripeBtnEl.textContent = 'Redirecting...';
       try {
-        const BASE = 'https://fonk.zo.space';
-        const res = await fetch(BASE + '/api/listen/create-checkout', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount, email, hasCD }),
+        const res = await fetch('https://fonk.zo.space/api/listen/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount, email: emailEl.value, hasCD }),
         });
         const data = await res.json();
         if (data.url) window.location.href = data.url;
-        else { errorMsg.textContent = data.error || 'Something went wrong'; errorMsg.style.display = 'block'; checkoutBtn.disabled = false; checkoutBtn.textContent = 'Pay $' + (amount + (hasCD ? 10 : 0)) + ' with Stripe'; }
-      } catch { errorMsg.textContent = 'Connection failed. Try again.'; errorMsg.style.display = 'block'; checkoutBtn.disabled = false; checkoutBtn.textContent = 'Pay $' + (amount + (hasCD ? 10 : 0)) + ' with Stripe'; }
+        else { throw new Error(data.error || 'Failed'); }
+      } catch (e) {
+        errorEl.textContent = e.message || 'Something went wrong. Try again.';
+        errorEl.style.display = 'block';
+        loading = false;
+        stripeBtnEl.disabled = false;
+        stripeBtnEl.textContent = 'Pay $' + total() + ' with Stripe';
+      }
     });
 
-    document.getElementById('altToggle').addEventListener('click', () => {
-      const alt = document.getElementById('altMethods');
-      const btn = document.getElementById('altToggle');
-      alt.style.display = alt.style.display === 'none' ? 'block' : 'none';
-      btn.textContent = alt.style.display === 'none' ? 'Show CashApp / Venmo / Other' : 'Hide CashApp / Venmo / Other';
-    });
+    updateUI();
   </script>
 </body>
 </html>
