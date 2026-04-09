@@ -6,32 +6,30 @@
   <title>Thank You — LISTEN</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #09090b; color: #fff; font-family: -apple-system, BlinkMacSystemFont, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-    .container { text-align: center; padding: 40px 24px; max-width: 500px; }
-    .icon { font-size: 64px; margin-bottom: 24px; }
-    h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
-    p { color: #71717a; font-size: 16px; line-height: 1.6; margin-bottom: 12px; }
-    .email-note { background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 16px; margin: 24px 0; font-size: 14px; color: #a1a1aa; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; }
+    .icon { font-size: 4rem; margin-bottom: 1rem; }
+    h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    p { color: #666; font-size: 1rem; line-height: 1.6; max-width: 400px; margin-bottom: 0.5rem; }
+    .email-note { background: #111; border: 1px solid #1a1a1a; border-radius: 8px; padding: 1rem; margin: 1.5rem 0; max-width: 400px; width: 100%; }
     .email-note strong { color: #fff; }
-    .btn { display: inline-block; padding: 14px 28px; background: #22c55e; color: #000; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; margin-top: 8px; }
-    .btn:hover { background: #16a34a; }
-    .tag { display: inline-block; background: #27272a; border: 1px solid #3f3f46; color: #52525b; font-size: 11px; padding: 4px 10px; border-radius: 20px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+    .email-note small { color: #444; font-size: 0.8rem; }
+    .email-note p { color: #888; font-size: 0.85rem; margin: 0; }
+    a { color: #fff; text-decoration: none; display: inline-block; margin-top: 1.5rem; padding: 0.8rem 2rem; background: #fff; color: #000; border-radius: 6px; font-weight: 700; }
+    a:hover { opacity: 0.85; }
+    .footer { margin-top: 3rem; font-size: 0.75rem; color: #2a2a2a; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="icon">🎵</div>
-    <span class="tag">LISTEN</span>
-    <h1>Thank you.</h1>
-    <p>Your payment went through. Head to your inbox — the download link is on its way.</p>
-    <div class="email-note">
-      📧 Check <strong>snugsworth@gmail.com</strong> (and your spam folder) for the download link.<br>
-      The link expires in 24 hours.
-    </div>
-    <p style="font-size:14px; color:#3f3f46;">
-      Didn't get an email? Email <strong>snugsworth@gmail.com</strong> with your payment confirmation.
-    </p>
-    <a href="/" class="btn">← Back to LISTEN</a>
+  <div class="icon">🎵</div>
+  <h1>Thank you.</h1>
+  <p>Your payment came through. LISTEN is on its way to your inbox.</p>
+  <div class="email-note">
+    <p>📧 <strong>Check your email</strong></p>
+    <p style="margin-top:0.5rem;">A download link for your zip has been sent. If you don't see it, check your spam folder.</p>
+    <small style="display:block;margin-top:0.75rem;">CD orders: we'll email you separately for your mailing address.</small>
   </div>
+  <p style="font-size:0.85rem;color:#333;">Having trouble? Email <strong style="color:#555">snugsworth@gmail.com</strong></p>
+  <a href="/">← Back to store</a>
+  <div class="footer">&copy; 2026 Snugsworth</div>
 </body>
 </html>

@@ -4,221 +4,164 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LISTEN — Snugsworth</title>
-  <meta name="description" content="LISTEN — a new beat tape by Snugsworth. Pay what you want. Digital delivery instant.">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #09090b; color: #fff; font-family: -apple-system, BlinkMacSystemFont, sans-serif; min-height: 100vh; }
-    .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
-    .hero { text-align: center; margin-bottom: 40px; }
-    .cover { width: 220px; height: 220px; border-radius: 8px; margin-bottom: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
-    h1 { font-size: 56px; font-weight: 800; letter-spacing: -2px; line-height: 1; margin-bottom: 8px; }
-    .artist { color: #71717a; font-size: 18px; margin-bottom: 4px; }
-    .tag { display: inline-block; background: #27272a; border: 1px solid #3f3f46; color: #a1a1aa; font-size: 11px; padding: 4px 10px; border-radius: 20px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
-    .track-list { background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 20px 24px; margin-bottom: 32px; }
-    .track { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #27272a; font-size: 14px; color: #a1a1aa; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; }
+    .hero { text-align: center; margin-bottom: 2.5rem; }
+    .hero img { width: 260px; border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); margin-bottom: 1.5rem; }
+    h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.25rem; background: linear-gradient(135deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .tagline { font-size: 1rem; color: #666; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1.5rem; }
+    .tracks { background: #111; border-radius: 10px; padding: 1.5rem; margin-bottom: 2rem; width: 100%; max-width: 440px; }
+    .tracks h2 { font-size: 0.75rem; color: #444; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+    .track { display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.9rem; color: #ccc; border-bottom: 1px solid #1a1a1a; }
     .track:last-child { border-bottom: none; }
-    .track-num { color: #52525b; font-size: 12px; min-width: 24px; }
-    .track-name { flex: 1; color: #e4e4e7; }
-    .section { background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
-    .section-title { font-size: 13px; color: #71717a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
-    .price-presets { display: flex; gap: 8px; margin-bottom: 16px; }
-    .price-btn { flex: 1; padding: 12px 0; border: 1px solid #3f3f46; background: #27272a; color: #e4e4e7; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; transition: all 0.15s; }
-    .price-btn:hover { border-color: #52525b; background: #32323a; }
-    .price-btn.active { border-color: #22c55e; background: rgba(34,197,94,0.1); color: #22c55e; }
-    .custom-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
-    .custom-row span { color: #71717a; font-size: 15px; }
-    .custom-row input { flex: 1; background: #27272a; border: 1px solid #3f3f46; color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 15px; outline: none; }
-    .custom-row input:focus { border-color: #52525b; }
-    .cd-toggle { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-top: 1px solid #27272a; margin-top: 8px; }
-    .cd-toggle label { font-size: 14px; color: #a1a1aa; }
-    .cd-note { font-size: 12px; color: #52525b; margin-top: 4px; }
-    .toggle { position: relative; width: 44px; height: 24px; }
-    .toggle input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider { position: absolute; inset: 0; background: #3f3f46; border-radius: 24px; cursor: pointer; transition: 0.2s; }
-    .toggle-slider:before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: 0.2s; }
-    .toggle input:checked + .toggle-slider { background: #22c55e; }
-    .toggle input:checked + .toggle-slider:before { transform: translateX(20px); }
-    .total-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-top: 1px solid #27272a; margin-top: 8px; font-size: 15px; }
-    .total-label { color: #a1a1aa; }
-    .total-amount { font-weight: 700; font-size: 20px; }
-    .stripe-btn { width: 100%; padding: 16px; background: #635bff; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 12px; transition: background 0.15s; }
-    .stripe-btn:hover { background: #5147e5; }
-    .stripe-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .or-divider { text-align: center; color: #52525b; font-size: 12px; margin: 16px 0; }
-    .cashapp-btn { display: block; width: 100%; padding: 16px; background: #00d632; color: #000; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; transition: background 0.15s; }
-    .cashapp-btn:hover { background: #00b52a; }
-    .alt-toggle-btn { display: block; width: 100%; padding: 12px; background: transparent; color: #52525b; border: 1px solid #27272a; border-radius: 8px; font-size: 13px; cursor: pointer; margin-top: 12px; transition: color 0.15s; }
-    .alt-toggle-btn:hover { color: #71717a; }
-    .alt-methods { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid #27272a; }
-    .alt-methods h4 { font-size: 13px; color: #71717a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-    .alt-link { display: block; padding: 12px 14px; background: #27272a; border: 1px solid #3f3f46; border-radius: 8px; color: #e4e4e7; text-decoration: none; font-size: 14px; margin-bottom: 8px; transition: border-color 0.15s; }
-    .alt-link:hover { border-color: #52525b; }
-    .alt-link small { display: block; color: #52525b; font-size: 11px; margin-top: 2px; }
-    .min-notice { text-align: center; color: #52525b; font-size: 12px; margin-top: 12px; }
-    .credits { text-align: center; color: #3f3f46; font-size: 12px; margin-top: 40px; }
-    .credits a { color: #52525b; text-decoration: none; }
-    .error-msg { background: rgba(239,68,68,0.1); border: 1px solid #ef4444; color: #fca5a5; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; display: none; }
-    @media (max-width: 480px) { h1 { font-size: 42px; } .container { padding: 24px 16px; } }
+    .track-num { color: #333; margin-right: 0.75rem; font-size: 0.8rem; }
+    .section { width: 100%; max-width: 440px; margin-bottom: 1.5rem; }
+    .section h3 { font-size: 0.75rem; color: #444; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .amounts { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .price-btn { flex: 1; min-width: 60px; padding: 0.75rem 0.5rem; border: 1.5px solid #222; background: #111; color: #fff; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.15s; }
+    .price-btn:hover { border-color: #444; background: #161616; }
+    .price-btn.selected { border-color: #fff; background: #1a1a1a; }
+    .price-btn.adjust { flex: 0; min-width: 44px; font-size: 1.2rem; }
+    .curr { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; display: block; }
+    .custom-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+    .custom-row input { flex: 1; padding: 0.75rem; background: #111; border: 1.5px solid #222; border-radius: 6px; color: #fff; font-size: 1rem; outline: none; }
+    .custom-row input:focus { border-color: #444; }
+    .cd-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; font-size: 0.9rem; color: #999; cursor: pointer; }
+    .cd-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: #fff; cursor: pointer; }
+    .email-row { margin-bottom: 1rem; }
+    .email-row label { display: block; font-size: 0.75rem; color: #444; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .email-row input { width: 100%; padding: 0.75rem; background: #111; border: 1.5px solid #222; border-radius: 6px; color: #fff; font-size: 1rem; outline: none; }
+    .email-row input:focus { border-color: #444; }
+    .submit-btn { width: 100%; padding: 1rem; background: #fff; color: #000; border: none; border-radius: 6px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s; margin-bottom: 0.75rem; }
+    .submit-btn:hover { opacity: 0.85; }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .alt-header { font-size: 0.7rem; color: #333; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; margin: 1rem 0 0.5rem; }
+    .alt-btns { display: flex; gap: 0.5rem; }
+    .alt-btn { flex: 1; padding: 0.75rem; background: #111; border: 1.5px solid #1e1e1e; border-radius: 6px; color: #888; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; display: block; transition: all 0.15s; }
+    .alt-btn:hover { border-color: #333; color: #fff; }
+    .cashapp-btn { color: #00d26a; border-color: #00d26a33; }
+    .cashapp-btn:hover { background: #00d26a11; }
+    .note { font-size: 0.75rem; color: #333; text-align: center; margin-top: 0.5rem; }
+    .divider { width: 100%; max-width: 440px; height: 1px; background: #161616; margin: 0.5rem 0; }
+    .cancel-btn { display: block; width: 100%; max-width: 440px; padding: 0.75rem; background: transparent; border: 1px solid #222; color: #444; border-radius: 6px; font-size: 0.85rem; cursor: pointer; text-align: center; text-decoration: none; transition: all 0.15s; }
+    .cancel-btn:hover { border-color: #333; color: #666; }
+    .footer { margin-top: auto; padding-top: 2rem; text-align: center; font-size: 0.75rem; color: #2a2a2a; }
+    .footer a { color: #3a3a3a; text-decoration: none; }
+    .footer a:hover { color: #555; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="hero">
-      <img src="/assets/listen/album-cover.jpg" alt="LISTEN cover" class="cover" onerror="this.style.display='none'">
-      <h1>LISTEN</h1>
-      <p class="artist">Snugsworth</p>
-      <span class="tag">Beat Tape — 2025</span>
+
+  <div class="hero">
+    <img src="assets/album-cover.jpg" alt="LISTEN — Snugsworth" onerror="this.style.display='none'">
+    <h1>LISTEN</h1>
+    <div class="tagline">Snugsworth &nbsp;·&nbsp; Beat Tape &nbsp;·&nbsp; 2026</div>
+  </div>
+
+  <div class="tracks">
+    <h2>Tracklist</h2>
+    <div class="track"><span class="track-num">01</span><span>INTROVERT</span></div>
+    <div class="track"><span class="track-num">02</span><span>BRANDON</span></div>
+    <div class="track"><span class="track-num">03</span><span>NO ENCORE</span></div>
+    <div class="track"><span class="track-num">04</span><span>WENDY SWERVE</span></div>
+    <div class="track"><span class="track-num">05</span><span>CHUNKY</span></div>
+    <div class="track"><span class="track-num">06</span><span>SLIMthick</span></div>
+    <div class="track"><span class="track-num">07</span><span>RBS</span></div>
+    <div class="track"><span class="track-num">08</span><span>ALL THE TIME</span></div>
+    <div class="track"><span class="track-num">09</span><span>OUTROVERT</span></div>
+  </div>
+
+  <div class="section">
+    <h3>Pay What You Want</h3>
+    <div class="amounts">
+      <button class="price-btn selected" data-amt="5">$5</button>
+      <button class="price-btn" data-amt="10">$10</button>
+      <button class="price-btn" data-amt="15">$15</button>
+      <button class="price-btn" data-amt="20">$20</button>
+      <button class="price-btn" data-amt="30">$30</button>
+      <button class="price-btn adjust" id="dec">−</button>
     </div>
-
-    <div class="track-list">
-      <div class="track"><span class="track-num">01</span><span class="track-name">CLEAN</span></div>
-      <div class="track"><span class="track-num">02</span><span class="track-name">NO ENCORE</span></div>
-      <div class="track"><span class="track-num">03</span><span class="track-name">BLACKLIGHT</span></div>
-      <div class="track"><span class="track-num">04</span><span class="track-name">4 HERBS</span></div>
-      <div class="track"><span class="track-num">05</span><span class="track-name">BUSS DOWN</span></div>
-      <div class="track"><span class="track-num">06</span><span class="track-name">MILLION DOLLAR BABY</span></div>
-      <div class="track"><span class="track-num">07</span><span class="track-name">PRINCE ROCCS</span></div>
-      <div class="track"><span class="track-num">08</span><span class="track-name">SLIDE</span></div>
-      <div class="track"><span class="track-num">09</span><span class="track-name">ALL THE TIME</span></div>
+    <div class="custom-row">
+      <span style="color:#555;font-size:1.2rem;">$</span>
+      <input type="number" id="customAmt" placeholder="Custom amount (min $5)" min="5" step="1">
     </div>
-
-    <div class="section">
-      <p class="section-title">Pay What You Want</p>
-      <div class="price-presets">
-        <button class="price-btn" data-amt="5">$5</button>
-        <button class="price-btn" data-amt="10">$10</button>
-        <button class="price-btn" data-amt="15">$15</button>
-        <button class="price-btn" data-amt="20">$20</button>
-        <button class="price-btn" data-amt="30">$30</button>
-      </div>
-      <div class="custom-row">
-        <span>$</span>
-        <input type="number" id="customAmount" placeholder="Enter amount (min $5)" min="5" step="1">
-      </div>
-
-      <div class="cd-toggle" id="cdSection" style="display:none">
-        <div>
-          <label>Add CD (+$10)</label>
-          <p class="cd-note">Mailed anywhere in the US</p>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" id="cdToggle">
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-
-      <div class="total-row">
-        <span class="total-label">Total</span>
-        <span class="total-amount" id="totalDisplay">$5</span>
-      </div>
-
-      <div class="error-msg" id="errorMsg"></div>
-
-      <button class="stripe-btn" id="stripeBtn">Pay with Card — $5</button>
-      <p class="or-divider">or</p>
-      <a class="cashapp-btn" id="cashappBtn" href="#" target="_blank">Pay with CashApp — $5</a>
-      <button class="alt-toggle-btn" id="altToggleBtn">Show Venmo / Other options</button>
-
-      <div class="alt-methods" id="altMethods">
-        <h4>Other ways to pay</h4>
-        <a class="alt-link" href="https://venmo.com/u/snugsworth" target="_blank">
-          Venmo @snugsworth
-          <small>Send as "Purchase" — include your email in the note</small>
-        </a>
-        <a class="alt-link" href="#" id="cashappManualBtn">
-          CashApp (send manually)
-          <small>Open the app, go to Pay, enter $snugsworth</small>
-        </a>
-        <a class="alt-link" href="https://paypal.me/snugsworth" target="_blank">
-          PayPal.me / Cash Mail
-          <small>Send as "Friends & Family"</small>
-        </a>
-        <p style="font-size:11px; color:#3f3f46; margin-top:10px; line-height:1.5;">
-          After paying, email <strong>snugsworth@gmail.com</strong> with your payment confirmation to receive the download link.
-        </p>
-      </div>
+    <div class="cd-row">
+      <input type="checkbox" id="hasCD">
+      <label for="hasCD">Add CD mailed to you (+$15)</label>
     </div>
+    <div class="email-row">
+      <label for="email">Your email</label>
+      <input type="email" id="email" placeholder="for download link + CD mailing">
+    </div>
+    <button class="submit-btn" id="stripeBtn">Buy — <span id="btnAmt">$5</span></button>
+    <div class="alt-header">— or send directly —</div>
+    <div class="alt-btns">
+      <a class="alt-btn cashapp-btn" id="cashappBtn" href="https://cash.app/$snugsworth" target="_blank">CashApp</a>
+      <a class="alt-btn" href="https://venmo.com/u/snugsworth" target="_blank">Venmo</a>
+    </div>
+    <p class="note">Download link emailed instantly after payment</p>
+  </div>
 
-    <p class="min-notice">Minimum donation $5 — pay what you think it's worth</p>
-
-    <p class="credits">
-      Produced by <a href="https://snugsworth.com" target="_blank">Snugsworth</a> ·
-      Stream on <a href="https://soundcloud.com/snugsworth" target="_blank">SoundCloud</a>
-    </p>
+  <div class="footer">
+    &copy; 2026 Snugsworth &nbsp;·&nbsp; <a href="https://snugos.github.io/space" target="_blank">snugsworth.com</a>
   </div>
 
   <script>
-    const CAS = 'snugsworth';
+    const API = 'https://music-store-three-eta.vercel.app/api';
     let amount = 5;
-    let hasCD = false;
 
-    const totalDisplay = document.getElementById('totalDisplay');
-    const customAmount = document.getElementById('customAmount');
-    const stripeBtn = document.getElementById('stripeBtn');
-    const cashappBtn = document.getElementById('cashappBtn');
-    const cashappManualBtn = document.getElementById('cashappManualBtn');
-    const cdSection = document.getElementById('cdSection');
-    const cdToggle = document.getElementById('cdToggle');
-    const altToggleBtn = document.getElementById('altToggleBtn');
-    const altMethods = document.getElementById('altMethods');
-    const errorMsg = document.getElementById('errorMsg');
+    function $(id) { return document.getElementById(id); }
+    const priceBtns = document.querySelectorAll('.price-btn[data-amt]');
+    const customAmt = $('customAmt');
+    const emailEl = $('email');
+    const btnAmt = $('btnAmt');
+    const stripeBtn = $('stripeBtn');
+    const cashappBtn = $('cashappBtn');
 
-    function updateTotal(val) {
-      amount = Math.max(5, parseInt(val) || 5);
-      const total = amount + (hasCD && amount >= 15 ? 10 : 0);
-      totalDisplay.textContent = '$' + total;
-      stripeBtn.textContent = 'Pay with Card — $' + total;
-      cashappBtn.href = 'https://cash.app/$' + CAS + '/' + total;
-      customAmount.value = amount;
-      document.querySelectorAll('.price-btn').forEach(b => {
-        b.classList.toggle('active', parseInt(b.dataset.amt) === amount);
-      });
-      // Show CD toggle once user hits $15+
-      cdSection.style.display = amount >= 15 ? 'flex' : 'none';
+    function setAmount(n) {
+      amount = Math.max(5, n);
+      customAmt.value = amount === 5 ? '' : amount;
+      btnAmt.textContent = '$' + amount;
+      priceBtns.forEach(b => b.classList.toggle('selected', parseInt(b.dataset.amt) === amount));
+      cashappBtn.href = 'https://cash.app/$snugsworth/' + amount;
     }
 
-    document.querySelectorAll('.price-btn').forEach(btn => {
-      btn.addEventListener('click', () => updateTotal(btn.dataset.amt));
-    });
-    customAmount.addEventListener('input', e => updateTotal(e.target.value));
-
-    cdToggle.addEventListener('change', e => {
-      hasCD = e.target.checked;
-      updateTotal(amount);
+    priceBtns.forEach(btn => {
+      btn.addEventListener('click', () => setAmount(parseInt(btn.dataset.amt)));
     });
 
-    altToggleBtn.addEventListener('click', () => {
-      const visible = altMethods.style.display === 'block';
-      altMethods.style.display = visible ? 'none' : 'block';
-      altToggleBtn.textContent = visible ? 'Show Venmo / Other options' : 'Hide options';
+    $('dec').addEventListener('click', () => setAmount(amount - 1));
+    customAmt.addEventListener('input', () => {
+      const v = parseInt(customAmt.value);
+      if (v >= 5) setAmount(v);
     });
 
     stripeBtn.addEventListener('click', async () => {
-      errorMsg.style.display = 'none';
+      const email = emailEl.value.trim();
+      const hasCD = $('hasCD').checked;
+      if (!email) return alert('Please enter your email address.');
+      if (amount < 5) return alert('Minimum donation is $5.');
+
       stripeBtn.disabled = true;
       stripeBtn.textContent = 'Redirecting...';
+
       try {
-        const res = await fetch('/api/create-checkout', {
+        const res = await fetch(API + '/checkout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount, hasCD }),
+          body: JSON.stringify({ amount, email, hasCD }),
         });
         const data = await res.json();
-        if (data.url) {
-          window.location.href = data.url;
-        } else {
-          throw new Error(data.error || 'Something went wrong');
-        }
-      } catch (err) {
-        errorMsg.textContent = err.message;
-        errorMsg.style.display = 'block';
+        if (data.url) window.location.href = data.url;
+        else alert('Error: ' + (data.error || 'Something went wrong'));
+      } catch(e) {
+        alert('Connection error. Please try again.');
+      } finally {
         stripeBtn.disabled = false;
-        stripeBtn.textContent = 'Pay with Card — $' + (amount + (hasCD && amount >= 15 ? 10 : 0));
+        stripeBtn.textContent = 'Buy — ' + btnAmt.textContent;
       }
     });
-
-    // Init
-    updateTotal(5);
   </script>
 </body>
 </html>
