@@ -93,22 +93,34 @@
     <div id="successView" class="success-view">
       <div class="check">✅</div>
       <h2>You're all set!</h2>
-      <p>Check your email for the magic link to access your dashboard.</p>
-      <a href="/music-store/" class="submit" style="display:inline-block;text-decoration:none;">Back to Marketplace</a>
+      <p>Your artist store has been created. You can now access your dashboard to add albums and start selling.</p>
+      <a href="/music-store/dashboard/" class="submit" style="display:inline-block;text-decoration:none;background:#fff;color:#000;padding:1rem 2rem;border-radius:8px;font-weight:700;margin-top:0.5rem;">Go to Dashboard →</a>
+      <div style="margin-top:1.5rem;">
+        <a href="/music-store/" style="color:#666;font-size:0.85rem;">← Back to Marketplace</a>
+      </div>
     </div>
 
     <div id="errorMsg" style="color:#e74c3c;font-size:0.85rem;margin-top:1rem;text-align:center;"></div>
   </div>
 
   <script>
-    const API = ''; // Will use relative paths for zo.space
+    const API = '';
     let artistEmail = '';
-    let artistToken = '';
+    let authToken = '';
+
+    // On page load, check for magic link callback token (e.g. ?token=xxx from email click)
+    const urlParams = new URLSearchParams(window.location.search);
+    const callbackToken = urlParams.get('token');
+    if (callbackToken) {
+      localStorage.setItem('auth_token', callbackToken);
+      window.location.href = '/music-store/dashboard/';
+    }
 
     function updateSlugPreview() {
-      const val = document.getElementById('slugInput').value
+      const input = document.getElementById('slugInput');
+      const val = input.value
         .toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
-      document.getElementById('slugInput').value = val;
+      input.value = val;
       const preview = document.getElementById('slugPreview');
       const previewText = document.getElementById('slugPreviewText');
       if (val) {
@@ -125,10 +137,25 @@
       } else if (val.includes('--')) {
         hint.textContent = 'No consecutive hyphens';
         hint.className = 'hint error';
+      } else if (val) {
+        hint.textContent = 'Only lowercase letters, numbers, and hyphens';
+        hint.className = 'hint';
       } else {
         hint.textContent = 'Only lowercase letters, numbers, and hyphens';
         hint.className = 'hint';
       }
+    }
+
+    function validateForm() {
+      const name = document.getElementById('name').value.trim();
+      const slug = document.getElementById('slugInput').value.trim();
+      const err = document.getElementById('errorMsg');
+
+      if (!name) { err.textContent = 'Artist name is required'; return false; }
+      if (!slug || slug.length < 3) { err.textContent = 'URL must be at least 3 characters'; return false; }
+      if (slug.includes('--')) { err.textContent = 'No consecutive hyphens allowed'; return false; }
+      if (!/^[a-z0-9-]+$/.test(slug)) { err.textContent = 'Only lowercase letters, numbers, and hyphens'; return false; }
+      return true;
     }
 
     async function sendMagicLink() {
@@ -138,6 +165,7 @@
       err.textContent = '';
 
       if (!email) { err.textContent = 'Please enter your email'; return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Please enter a valid email'; return; }
 
       btn.disabled = true;
       btn.textContent = 'Sending...';
@@ -149,11 +177,15 @@
           body: JSON.stringify({ email, type: 'signup' })
         });
         const data = await res.json();
-        // For demo, proceed to step 2 (real implementation would wait for magic link confirmation)
+
+        // For demo, proceed to step 2 — real impl would send email and wait
         artistEmail = email;
-        
-        // In production: show "check your email" message
-        // For demo purposes, we move to step 2 directly
+
+        // If magic link returns a session token directly, store it
+        if (data.token) {
+          localStorage.setItem('auth_token', data.token);
+        }
+
         document.getElementById('step1').style.display = 'none';
         document.getElementById('step2').style.display = 'block';
       } catch (e) {
@@ -164,15 +196,14 @@
     }
 
     async function registerArtist() {
+      if (!validateForm()) return;
+
       const name = document.getElementById('name').value.trim();
       const slug = document.getElementById('slugInput').value.trim();
       const bio = document.getElementById('bio').value.trim();
       const btn = document.getElementById('registerBtn');
       const err = document.getElementById('errorMsg');
       err.textContent = '';
-
-      if (!name) { err.textContent = 'Artist name is required'; return; }
-      if (!slug || slug.length < 3) { err.textContent = 'URL must be at least 3 characters'; return; }
 
       btn.disabled = true;
       btn.textContent = 'Creating...';
@@ -184,8 +215,16 @@
           body: JSON.stringify({ email: artistEmail, name, slug, bio })
         });
         const data = await res.json();
-        
-        if (!res.ok) throw new Error(data.error || 'Registration failed');
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Registration failed');
+        }
+
+        // In demo mode, auto-create session so user can access dashboard
+        // In production, they'd click the magic link from their email
+        // For demo: set a flag so auth guard recognizes this session
+        localStorage.setItem('auth_token', data.token || 'demo-token-' + data.artist?.id);
+        localStorage.setItem('artist_id', data.artist?.id || '');
 
         document.getElementById('step2').style.display = 'none';
         document.getElementById('successView').style.display = 'block';
