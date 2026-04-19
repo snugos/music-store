@@ -44,12 +44,12 @@ export async function createCheckoutSession(c: Context) {
     }
   } else {
     priceInCents = album.price_cents;
-    if (priceInCents <= 0) priceInCents = 500; // Default minimum
+    if (priceInCents <= 0) priceInCents = 500;
   }
 
   // Create Stripe Checkout session
   try {
-    const sessionConfig: any = {
+    const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
       customer_email: email || undefined,
@@ -72,20 +72,12 @@ export async function createCheckoutSession(c: Context) {
       success_url: `${BASE_URL}/success.html?session_id={CHECKOUT_SESSION_ID}&album=${album.id}`,
       cancel_url: `${BASE_URL}/cancel.html`,
       payment_intent_data: {
-        application_fee_amount: 0, // No platform fee
+        application_fee_amount: 0,
         transfer_data: {
           destination: artist.stripe_account_id
         }
       }
-    };
-
-    // If no name-your-price, use fixed price
-    if (!album.is_name_your_price) {
-      delete sessionConfig.payment_intent_data;
-      sessionConfig.line_items[0].price_data.unit_amount = album.price_cents || 500;
-    }
-
-    const session = await stripe.checkout.sessions.create(sessionConfig);
+    });
 
     return c.json({ url: session.url, sessionId: session.id });
   } catch (err: any) {

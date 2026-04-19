@@ -40,27 +40,31 @@ export async function listAlbums(c: Context) {
     query = query.eq('artist_id', artist.id);
   }
 
-  const { data, error } = await query;
-  if (error) return c.json({ error: error.message }, 500);
+  try {
+    const { data, error } = await query;
+    if (error) return c.json({ error: error.message }, 500);
 
-  // Get track counts
-  const albumIds = data.map(a => a.id);
-  const { data: trackCounts } = await supabase
-    .from('tracks')
-    .select('album_id')
-    .in('album_id', albumIds);
+    // Get track counts
+    const albumIds = data.map(a => a.id);
+    const { data: trackCounts } = await supabase
+      .from('tracks')
+      .select('album_id')
+      .in('album_id', albumIds);
 
-  const trackCountMap: Record<string, number> = {};
-  trackCounts?.forEach(t => { trackCountMap[t.album_id] = (trackCountMap[t.album_id] || 0) + 1; });
+    const trackCountMap: Record<string, number> = {};
+    trackCounts?.forEach(t => { trackCountMap[t.album_id] = (trackCountMap[t.album_id] || 0) + 1; });
 
-  const albums = data.map(a => ({
-    ...a,
-    artist_slug: a.artists?.slug,
-    artist_name: a.artists?.name,
-    track_count: trackCountMap[a.id] || 0
-  }));
+    const albums = data.map(a => ({
+      ...a,
+      artist_slug: a.artists?.slug,
+      artist_name: a.artists?.name,
+      track_count: trackCountMap[a.id] || 0
+    }));
 
-  return c.json({ albums });
+    return c.json({ albums });
+  } catch (err: any) {
+    return c.json({ error: err.message }, 500);
+  }
 }
 
 // POST /api/albums - Create album (authenticated)
@@ -84,6 +88,7 @@ export async function createAlbum(c: Context) {
       title,
       description: description || null,
       cover_image_url: cover_image_url || null,
+      genre: genre || null,
       price_cents: price_cents || 0,
       minimum_price_cents: minimum_price_cents || 500,
       is_name_your_price: is_name_your_price || false,

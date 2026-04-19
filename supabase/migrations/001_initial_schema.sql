@@ -27,6 +27,7 @@ CREATE TABLE albums (
   title VARCHAR(255) NOT NULL,
   description TEXT,
   cover_image_url TEXT,
+  genre VARCHAR(100),
   price_cents INTEGER NOT NULL DEFAULT 0,
   minimum_price_cents INTEGER DEFAULT 500,
   is_name_your_price BOOLEAN DEFAULT FALSE,

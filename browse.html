@@ -104,8 +104,7 @@
     async function loadAlbums() {
       const grid = document.getElementById('albumsGrid');
       try {
-        const res = await fetch('/api/albums');
-        if (!res.ok) throw new Error('API not available');
+        const res = await fetch('/api/albums?published=true');
         const data = await res.json();
         allAlbums = data.albums || [];
         renderAlbums();

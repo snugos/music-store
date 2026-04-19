@@ -1,4 +1,4 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { Context } from 'hono';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -6,7 +6,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
 });
 
 const ZIP_URL = 'https://zo.pub/fonk/listen/LISTEN.zip';
-const CD_EMAIL_NOTICE = '\n\n+ CD add-on purchased — we\'ll email you for your mailing address.';
 
 // In-memory deduplication (fine for low-volume hobby use)
 const processedEvents = new Map<string, number>();
@@ -19,17 +18,14 @@ function markProcessed(id: string) {
   }
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const sig = req.headers['stripe-signature'] as string;
-  const body = req.body;
+// POST /api/webhook - Stripe webhook handler
+export default async function handler(c: Context) {
+  const sig = c.req.header('stripe-signature');
+  const body = await c.req.text();
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
   if (!sig || !webhookSecret) {
-    return res.status(400).json({ error: 'Missing signature or secret' });
+    return c.json({ error: 'Missing signature or secret' }, 400);
   }
 
   let event: Stripe.Event;
@@ -37,11 +33,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err: any) {
     console.error('Webhook signature verification failed:', err.message);
-    return res.status(400).json({ error: 'Invalid signature' });
+    return c.json({ error: 'Invalid signature' }, 400);
   }
 
   if (processedEvents.has(event.id)) {
-    return res.json({ received: true, skipped: 'already processed' });
+    return c.json({ received: true, skipped: 'already processed' });
   }
   markProcessed(event.id);
 
@@ -55,5 +51,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // For now: just log it. Wire up Resend/SendGrid/etc. to actually deliver.
   }
 
-  return res.json({ received: true });
+  return c.json({ received: true });
 }

@@ -25,9 +25,23 @@ export async function getConnectLink(c: Context) {
 
   // Create Stripe Connect account if not exists
   if (!accountId) {
+    // Fetch artist email from auth.users
+    const { data: artistWithEmail } = await supabase
+      .from('artists')
+      .select('email')
+      .eq('id', artist.id)
+      .single();
+
+    let artistEmail = '';
+    if (artistWithEmail?.email) {
+      artistEmail = artistWithEmail.email;
+    } else {
+      artistEmail = artist.supabase_user_id; // fallback to UUID - Stripe may reject this
+    }
+
     const account = await stripe.accounts.create({
       type: 'express',
-      email: artist.supabase_user_id, // This should be actual email from auth.users
+      email: artistEmail,
       capabilities: { transfers: { requested: true } },
       metadata: { artist_id: artist.id, artist_slug: artist.slug }
     });

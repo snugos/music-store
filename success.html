@@ -20,16 +20,34 @@
   </style>
 </head>
 <body>
-  <div class="icon">🎵</div>
-  <h1>Thank you.</h1>
-  <p>Your payment came through. LISTEN is on its way to your inbox.</p>
-  <div class="email-note">
-    <p>📧 <strong>Check your email</strong></p>
-    <p style="margin-top:0.5rem;">A download link for your zip has been sent. If you don't see it, check your spam folder.</p>
-    <small style="display:block;margin-top:0.75rem;">CD orders: we'll email you separately for your mailing address.</small>
+  <div class="container">
+    <div class="icon">🎵</div>
+    <h1>Thank you.</h1>
+    <p id="albumName">Your payment came through. Your order is on its way to your inbox.</p>
+    <div class="email-note">
+      <p>📧 <strong>Check your email</strong></p>
+      <p id="deliveryNote" style="margin-top:0.5rem;">A download link for your album has been sent. If you don't see it, check your spam folder.</p>
+      <small id="cdNotice" style="display:none;margin-top:0.75rem;">CD orders: we'll email you separately for your mailing address.</small>
+    </div>
+    <p style="font-size:0.85rem;color:#333;">Having trouble? Email <strong style="color:#555">support@yoursite.com</strong></p>
+    <a href="/">← Back to store</a>
+    <div class="footer">© 2026 Music Marketplace</div>
   </div>
-  <p style="font-size:0.85rem;color:#333;">Having trouble? Email <strong style="color:#555">snugsworth@gmail.com</strong></p>
-  <a href="/">← Back to store</a>
-  <div class="footer">&copy; 2026 Snugsworth</div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const albumId = params.get('album');
+
+    if (albumId) {
+      fetch('/api/albums/' + albumId)
+        .then(r => r.ok ? r.json() : null)
+        .then(album => {
+          if (album) {
+            document.getElementById('albumName').textContent = 'Your payment for "' + album.title + '" came through.';
+          }
+        })
+        .catch(() => {});
+    }
+  </script>
 </body>
 </html>
