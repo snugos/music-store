@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artist Storefront — Music Marketplace</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Header / Cover */
+    .artist-header { position: relative; }
+    .cover-image { height: 280px; background: linear-gradient(135deg, #1a1a2e, #0f3460); display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
+    .cover-image img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+    .cover-image .emoji-fallback { font-size: 6rem; position: absolute; bottom: 20px; }
+    .artist-info { text-align: center; padding: 0 2rem; margin-top: -50px; position: relative; z-index: 1; }
+    .avatar { width: 100px; height: 100px; border-radius: 50%; background: #222; border: 3px solid #0a0a0a; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; overflow: hidden; }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .artist-name { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+    .artist-bio { color: #888; max-width: 500px; margin: 0 auto 1.5rem; line-height: 1.5; font-size: 0.95rem; }
+    .social-links { display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem; }
+    .social-link { background: #1a1a1a; border: 1px solid #333; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: border-color 0.15s; }
+    .social-link:hover { border-color: #fff; }
+
+    /* Content */
+    .content { max-width: 800px; margin: 0 auto; padding: 2rem; }
+    .section-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* Album Cards */
+    .albums-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; }
+    .album-card { background: #111; border-radius: 12px; overflow: hidden; transition: transform 0.2s; cursor: pointer; }
+    .album-card:hover { transform: translateY(-4px); }
+    .album-art { aspect-ratio: 1; background: linear-gradient(135deg, #2a1a1a, #3a2a1a); display: flex; align-items: center; justify-content: center; font-size: 3rem; overflow: hidden; }
+    .album-art img { width: 100%; height: 100%; object-fit: cover; }
+    .album-info { padding: 1rem; }
+    .album-title { font-weight: 600; margin-bottom: 0.25rem; }
+    .album-meta { font-size: 0.8rem; color: #666; margin-bottom: 0.5rem; }
+    .album-price { font-size: 0.85rem; color: #999; }
+    .album-price .tag { background: #1a1a1a; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; color: #666; }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 3rem; color: #444; }
+    .empty-state h3 { color: #666; margin-bottom: 0.5rem; }
+
+    /* Footer */
+    footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid #1a1a1a; color: #444; font-size: 0.8rem; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+
+  <div class="artist-header">
+    <div class="cover-image" id="coverImage">
+      <div class="emoji-fallback">🎵</div>
+    </div>
+    <div class="artist-info">
+      <div class="avatar" id="avatar">🎵</div>
+      <h1 class="artist-name" id="artistName">Loading...</h1>
+      <p class="artist-bio" id="artistBio"></p>
+      <div class="social-links" id="socialLinks"></div>
+    </div>
+  </div>
+
+  <div class="content">
+    <h2 class="section-title">Albums</h2>
+    <div class="albums-grid" id="albumsGrid">
+      <div class="empty-state"><h3>No albums yet</h3><p>This artist hasn't listed any albums.</p></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Powered by <a href="/">Music Marketplace</a></p>
+  </footer>
+
+  <script>
+    // Get slug from URL: /artist/{slug}.html
+    const pathParts = window.location.pathname.split('/');
+    const slug = pathParts[pathParts.length - 1].replace('.html', '');
+    const apiBase = ''; // Use relative path for zo.space
+
+    async function loadArtist() {
+      try {
+        const res = await fetch(`/api/artists/${encodeURIComponent(slug)}`);
+        if (!res.ok) throw new Error('Artist not found');
+        const data = await res.json();
+        const artist = data.artist;
+
+        document.title = `${artist.name} — Music Marketplace`;
+
+        // Cover
+        const cover = document.getElementById('coverImage');
+        if (artist.cover_image_url) {
+          cover.innerHTML = `<img src="${escapeHtml(artist.cover_image_url)}" alt="">`;
+        }
+
+        // Avatar
+        const avatar = document.getElementById('avatar');
+        if (artist.avatar_url) {
+          avatar.innerHTML = `<img src="${escapeHtml(artist.avatar_url)}" alt="">`;
+        } else {
+          avatar.textContent = '🎵';
+        }
+
+        document.getElementById('artistName').textContent = artist.name;
+        document.getElementById('artistBio').textContent = artist.bio || '';
+
+        // Social links
+        const socials = document.getElementById('socialLinks');
+        const links = artist.social_links || {};
+        if (links.twitter) socials.innerHTML += `<a href="https://twitter.com/${escapeHtml(links.twitter)}" class="social-link" target="_blank">𝕏</a>`;
+        if (links.instagram) socials.innerHTML += `<a href="https://instagram.com/${escapeHtml(links.instagram)}" class="social-link" target="_blank">📷</a>`;
+        if (links.website) socials.innerHTML += `<a href="${escapeHtml(links.website)}" class="social-link" target="_blank">🌐</a>`;
+
+        // Load albums
+        loadAlbums(artist.id);
+      } catch (e) {
+        document.getElementById('artistName').textContent = 'Artist Not Found';
+        document.getElementById('albumsGrid').innerHTML = '<div class="empty-state"><h3>Could not load artist</h3></div>';
+      }
+    }
+
+    async function loadAlbums(artistId) {
+      try {
+        const res = await fetch(`/api/albums?artist_id=${artistId}&published=true`);
+        const data = await res.json();
+        const albums = data.albums || [];
+
+        const grid = document.getElementById('albumsGrid');
+        if (albums.length === 0) {
+          grid.innerHTML = '<div class="empty-state"><h3>No albums yet</h3><p>This artist hasn\'t listed any albums.</p></div>';
+          return;
+        }
+
+        grid.innerHTML = albums.map(album => `
+          <a href="/album/${album.id}.html" class="album-card">
+            <div class="album-art">${album.cover_image_url ? `<img src="${escapeHtml(album.cover_image_url)}" alt="">` : '🎵'}</div>
+            <div class="album-info">
+              <div class="album-title">${escapeHtml(album.title)}</div>
+              <div class="album-meta">${album.track_count || ''} tracks</div>
+              <div class="album-price">
+                ${album.is_name_your_price ? '<span class="tag">Name your price</span>' : '$' + (album.price_cents / 100).toFixed(2)}
+              </div>
+            </div>
+          </a>
+        `).join('');
+      } catch (e) {
+        // Silently fail, keep empty state
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    loadArtist();
+  </script>
+
+</body>
+</html>

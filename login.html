@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artist Login — Music Marketplace</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: inherit; text-decoration: none; }
+    
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; max-width: 900px; margin: 0 auto; width: 100%; }
+    .logo { font-size: 1.2rem; font-weight: 700; }
+    .logo span { color: #666; }
+    nav a { color: #888; font-size: 0.9rem; }
+    nav a:hover { color: #fff; }
+
+    .container { max-width: 400px; margin: auto; padding: 3rem 2rem; text-align: center; }
+    h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: #666; margin-bottom: 2.5rem; font-size: 0.95rem; line-height: 1.5; }
+
+    .form-group { margin-bottom: 1rem; }
+    input { width: 100%; padding: 0.9rem 1rem; background: #111; border: 1.5px solid #222; border-radius: 8px; color: #fff; font-size: 1rem; outline: none; text-align: center; }
+    input:focus { border-color: #444; }
+
+    button.submit { width: 100%; padding: 1rem; background: #fff; color: #000; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s; margin-top: 1rem; }
+    button.submit:hover { opacity: 0.85; }
+    button.submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .note { font-size: 0.75rem; color: #444; margin-top: 1.5rem; }
+    .note a { color: #666; }
+    .note a:hover { color: #fff; }
+
+    #message { margin-top: 1rem; font-size: 0.85rem; }
+    #message.success { color: #2ecc71; }
+    #message.error { color: #e74c3c; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">market<span>.place</span></a>
+    <a href="/register.html">Create account</a>
+  </nav>
+
+  <div class="container">
+    <h1>Artist Login</h1>
+    <p class="subtitle">Enter your email to receive a magic link</p>
+
+    <div class="form-group">
+      <input type="email" id="email" placeholder="artist@example.com">
+    </div>
+    <button class="submit" id="loginBtn" onclick="sendMagicLink()">Send Magic Link</button>
+
+    <div id="message"></div>
+
+    <p class="note">
+      New here? <a href="/register.html">Create an artist account</a>
+    </p>
+  </div>
+
+  <script>
+    async function sendMagicLink() {
+      const email = document.getElementById('email').value.trim();
+      const btn = document.getElementById('loginBtn');
+      const msg = document.getElementById('message');
+
+      if (!email) { msg.textContent = 'Please enter your email'; msg.className = 'error'; return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      msg.textContent = '';
+      msg.className = '';
+
+      try {
+        const res = await fetch('/api/auth/magic-link', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, type: 'login' })
+        });
+        const data = await res.json();
+
+        // In production, always show success to prevent email enumeration
+        msg.textContent = 'Check your email for the magic link!';
+        msg.className = 'success';
+        btn.textContent = 'Sent';
+      } catch (e) {
+        msg.textContent = 'Connection error. Please try again.';
+        msg.className = 'error';
+        btn.disabled = false;
+        btn.textContent = 'Send Magic Link';
+      }
+    }
+
+    // Handle magic link callback
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('token')) {
+      // Store token and redirect to dashboard
+      localStorage.setItem('auth_token', urlParams.get('token'));
+      window.location.href = '/dashboard/';
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Album — Artist Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; background: #111; border-right: 1px solid #1a1a1a; padding: 2rem 0; flex-shrink: 0; position: fixed; height: 100vh; }
+    .sidebar-logo { padding: 0 1.5rem 2rem; font-size: 1.1rem; font-weight: 800; border-bottom: 1px solid #1a1a1a; margin-bottom: 1.5rem; }
+    .sidebar-logo span { color: #555; }
+    .sidebar-nav { display: flex; flex-direction: column; }
+    .nav-item { padding: 0.75rem 1.5rem; font-size: 0.9rem; color: #888; display: flex; align-items: center; gap: 0.75rem; transition: all 0.15s; }
+    .nav-item:hover { color: #fff; background: #161616; }
+    .nav-item.active { color: #fff; background: #1a1a1a; border-right: 2px solid #fff; }
+    .main { flex: 1; margin-left: 240px; padding: 2rem 3rem; max-width: 900px; }
+    .header { margin-bottom: 2rem; }
+    .header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; }
+    .header a { font-size: 0.85rem; color: #555; }
+    .header a:hover { color: #888; }
+
+    .form-section { margin-bottom: 2.5rem; }
+    .section-title { font-size: 0.75rem; color: #555; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid #1a1a1a; }
+    
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 0.5rem; }
+    input, textarea, select { width: 100%; padding: 0.85rem 1rem; background: #111; border: 1.5px solid #222; border-radius: 8px; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.15s; }
+    input:focus, textarea:focus, select:focus { border-color: #444; }
+    textarea { resize: vertical; min-height: 80px; }
+    .hint { font-size: 0.75rem; color: #444; margin-top: 0.4rem; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .checkbox-group { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; cursor: pointer; }
+    .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; accent-color: #fff; cursor: pointer; }
+    .checkbox-group label { margin: 0; cursor: pointer; font-size: 0.9rem; color: #ccc; }
+
+    /* Cover Upload */
+    .cover-upload { display: flex; align-items: center; gap: 1.5rem; }
+    .cover-preview { width: 120px; height: 120px; border-radius: 8px; background: #111; border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-size: 3rem; overflow: hidden; flex-shrink: 0; }
+    .cover-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .cover-upload-btn { background: #1a1a1a; border: 1px solid #333; padding: 0.6rem 1.2rem; border-radius: 6px; color: #888; font-size: 0.85rem; cursor: pointer; }
+    .cover-upload-btn:hover { border-color: #555; color: #fff; }
+    input[type="file"] { display: none; }
+
+    /* Tracks */
+    .tracks-list { margin-top: 1rem; }
+    .track-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #0f0f0f; border-radius: 8px; margin-bottom: 0.5rem; }
+    .track-num { color: #444; font-size: 0.85rem; width: 24px; }
+    .track-item input { flex: 1; padding: 0.5rem 0.75rem; background: #0a0a0a; border: 1px solid #222; border-radius: 4px; color: #fff; font-size: 0.9rem; }
+    .track-item input:focus { border-color: #444; outline: none; }
+    .track-delete { background: transparent; border: none; color: #444; cursor: pointer; font-size: 1rem; padding: 0.25rem; }
+    .track-delete:hover { color: #e74c3c; }
+    .add-track-btn { background: transparent; border: 1px dashed #333; width: 100%; padding: 0.75rem; border-radius: 8px; color: #555; font-size: 0.85rem; cursor: pointer; margin-top: 0.5rem; }
+    .add-track-btn:hover { border-color: #555; color: #888; }
+
+    /* Audio Upload */
+    .audio-uploads { margin-top: 1rem; }
+    .audio-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #0f0f0f; border-radius: 8px; margin-bottom: 0.5rem; }
+    .audio-item .track-title { flex: 1; font-size: 0.9rem; color: #888; }
+    .audio-upload-btn { background: #1a1a1a; border: 1px solid #333; padding: 0.4rem 0.8rem; border-radius: 4px; color: #888; font-size: 0.75rem; cursor: pointer; }
+    .audio-upload-btn:hover { border-color: #555; color: #fff; }
+
+    /* Submit */
+    .form-actions { display: flex; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid #1a1a1a; }
+    .btn { padding: 0.85rem 1.5rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .btn-primary { background: #fff; color: #000; border: none; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-secondary { background: transparent; border: 1px solid #333; color: #888; }
+    .btn-secondary:hover { border-color: #555; color: #fff; }
+
+    #message { margin-top: 1rem; font-size: 0.85rem; }
+    #message.success { color: #2ecc71; }
+    #message.error { color: #e74c3c; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">market<span>.place</span></div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard/" class="nav-item">📊 Overview</a>
+        <a href="/dashboard/albums.html" class="nav-item">💿 Albums</a>
+        <a href="/dashboard/albums-new.html" class="nav-item active">➕ New Album</a>
+        <a href="/dashboard/orders.html" class="nav-item">📦 Orders</a>
+        <a href="/dashboard/settings.html" class="nav-item">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="header">
+        <h1>Create New Album</h1>
+        <a href="/dashboard/albums.html">← Back to Albums</a>
+      </div>
+
+      <form id="albumForm" onsubmit="handleSubmit(event)">
+        <div class="form-section">
+          <div class="section-title">Album Details</div>
+          
+          <div class="form-group">
+            <label>Album Title</label>
+            <input type="text" id="title" placeholder="Album name" required>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="description" placeholder="Tell fans about this album..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Cover Image</label>
+            <div class="cover-upload">
+              <div class="cover-preview" id="coverPreview">🎵</div>
+              <div>
+                <input type="file" id="coverInput" accept="image/*" onchange="previewCover(this)">
+                <button type="button" class="cover-upload-btn" onclick="document.getElementById('coverInput').click()">Upload Cover Image</button>
+                <p class="hint">JPG or PNG, at least 1400x1400px recommended</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group">
+              <label>Release Date</label>
+              <input type="date" id="releaseDate">
+            </div>
+            <div class="form-group">
+              <label>Genre (optional)</label>
+              <select id="genre">
+                <option value="">Select genre</option>
+                <option value="hip-hop">Hip-Hop</option>
+                <option value="r&b">R&B</option>
+                <option value="electronic">Electronic</option>
+                <option value="pop">Pop</option>
+                <option value="jazz">Jazz</option>
+                <option value="rock">Rock</option>
+                <option value="experimental">Experimental</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-title">Pricing</div>
+          
+          <div class="row">
+            <div class="form-group">
+              <label>Price (USD)</label>
+              <input type="number" id="price" placeholder="0.00" min="0" step="0.01">
+              <p class="hint">Leave empty or 0 for name-your-price (minimum $5)</p>
+            </div>
+            <div class="form-group">
+              <label>Minimum Price (USD)</label>
+              <input type="number" id="minPrice" placeholder="5.00" min="5" step="0.01" value="5">
+              <p class="hint">Only applies if name-your-price is enabled</p>
+            </div>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="isNameYourPrice">
+            <label for="isNameYourPrice">Enable "Name Your Price" (fans pay what they want)</label>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-title">Tracks</div>
+          
+          <div class="tracks-list" id="tracksList">
+            <div class="track-item">
+              <span class="track-num">01</span>
+              <input type="text" placeholder="Track title" class="track-title-input" required>
+              <button type="button" class="track-delete" onclick="removeTrack(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-track-btn" onclick="addTrack()">+ Add Track</button>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="submitBtn">Create Album</button>
+          <button type="button" class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
+        </div>
+
+        <div id="message"></div>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    let trackCount = 1;
+    let coverFile = null;
+
+    function addTrack() {
+      trackCount++;
+      const list = document.getElementById('tracksList');
+      const trackHtml = `
+        <div class="track-item">
+          <span class="track-num">${String(trackCount).padStart(2, '0')}</span>
+          <input type="text" placeholder="Track title" class="track-title-input" required>
+          <button type="button" class="track-delete" onclick="removeTrack(this)">×</button>
+        </div>
+      `;
+      list.insertAdjacentHTML('beforeend', trackHtml);
+    }
+
+    function removeTrack(btn) {
+      const item = btn.closest('.track-item');
+      item.remove();
+      // Renumber
+      document.querySelectorAll('.track-item').forEach((el, i) => {
+        el.querySelector('.track-num').textContent = String(i + 1).padStart(2, '0');
+      });
+      trackCount = document.querySelectorAll('.track-item').length;
+    }
+
+    function previewCover(input) {
+      if (input.files && input.files[0]) {
+        coverFile = input.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById('coverPreview').innerHTML = `<img src="${e.target.result}" alt="">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const msg = document.getElementById('message');
+      btn.disabled = true;
+      btn.textContent = 'Creating...';
+      msg.textContent = '';
+      msg.className = '';
+
+      try {
+        const tracks = Array.from(document.querySelectorAll('.track-title-input'))
+          .map((input, i) => ({ title: input.value.trim(), track_number: i + 1 }))
+          .filter(t => t.title);
+
+        const isNameYourPrice = document.getElementById('isNameYourPrice').checked;
+        const price = parseFloat(document.getElementById('price').value) || 0;
+
+        const albumData = {
+          title: document.getElementById('title').value.trim(),
+          description: document.getElementById('description').value.trim(),
+          release_date: document.getElementById('releaseDate').value || null,
+          genre: document.getElementById('genre').value || null,
+          price_cents: Math.round(price * 100),
+          is_name_your_price: isNameYourPrice,
+          minimum_price_cents: Math.round(parseFloat(document.getElementById('minPrice').value || 5) * 100),
+          is_published: true,
+          tracks
+        };
+
+        const token = localStorage.getItem('auth_token');
+        if (!token) { window.location.href = '/login.html'; return; }
+
+        // TODO: Upload cover image first, get URL, then create album
+        const res = await fetch('/api/albums', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify(albumData)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to create album');
+
+        msg.textContent = 'Album created successfully!';
+        msg.className = 'success';
+        btn.textContent = 'Created!';
+        
+        setTimeout(() => { window.location.href = '/dashboard/albums.html'; }, 1500);
+      } catch (e) {
+        msg.textContent = e.message || 'Error creating album';
+        msg.className = 'error';
+        btn.disabled = false;
+        btn.textContent = 'Create Album';
+      }
+    }
+
+    async function saveDraft() {
+      // Similar to handleSubmit but with is_published = false
+      const btn = document.querySelector('.btn-secondary');
+      btn.textContent = 'Saving...';
+      // TODO: implement draft saving
+      setTimeout(() => { btn.textContent = 'Save as Draft'; }, 1000);
+    }
+  </script>
+
+</body>
+</html>

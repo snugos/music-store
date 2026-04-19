@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Album — Music Marketplace</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; max-width: 900px; margin: 0 auto; }
+    .logo { font-size: 1.2rem; font-weight: 700; }
+    .logo span { color: #666; }
+    nav a { color: #888; font-size: 0.85rem; }
+    nav a:hover { color: #fff; }
+
+    .container { max-width: 800px; margin: 0 auto; padding: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    
+    /* Album Art */
+    .album-art-section { position: sticky; top: 2rem; }
+    .album-art { aspect-ratio: 1; background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 5rem; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .album-art img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Album Info */
+    .album-info-section {}
+    .breadcrumb { font-size: 0.8rem; color: #555; margin-bottom: 1rem; }
+    .breadcrumb a:hover { color: #888; }
+    .album-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+    .artist-name { font-size: 1rem; color: #888; margin-bottom: 1.5rem; }
+    .artist-name a:hover { color: #fff; }
+    .album-meta { font-size: 0.85rem; color: #666; margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+    .album-meta span { background: #111; padding: 0.3rem 0.75rem; border-radius: 4px; }
+
+    /* Tracklist */
+    .tracklist { margin-bottom: 2rem; }
+    .tracklist h3 { font-size: 0.75rem; color: #444; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+    .track { display: flex; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid #1a1a1a; }
+    .track:last-child { border-bottom: none; }
+    .track-num { width: 30px; color: #333; font-size: 0.85rem; }
+    .track-title { flex: 1; font-size: 0.9rem; }
+    .track-duration { color: #555; font-size: 0.8rem; margin-right: 0.75rem; }
+    .track-preview { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #333; background: transparent; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+    .track-preview:hover { border-color: #fff; background: #1a1a1a; }
+    .track-preview svg { width: 10px; height: 10px; fill: currentColor; }
+    .track-preview.playing { border-color: #fff; background: #fff; color: #000; }
+
+    /* Buy Section */
+    .buy-section { background: #111; border-radius: 12px; padding: 1.5rem; border: 1px solid #1e1e1e; }
+    .price-label { font-size: 0.75rem; color: #555; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .price { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .price-note { font-size: 0.8rem; color: #666; margin-bottom: 1.5rem; }
+    .email-input { margin-bottom: 1rem; }
+    .email-input label { display: block; font-size: 0.75rem; color: #555; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .email-input input { width: 100%; padding: 0.85rem; background: #0a0a0a; border: 1.5px solid #222; border-radius: 8px; color: #fff; font-size: 0.95rem; outline: none; }
+    .email-input input:focus { border-color: #444; }
+    .buy-btn { width: 100%; padding: 1rem; background: #fff; color: #000; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s; }
+    .buy-btn:hover { opacity: 0.85; }
+    .buy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .secure-note { font-size: 0.7rem; color: #444; text-align: center; margin-top: 0.75rem; }
+
+    /* Description */
+    .description { margin-top: 2rem; }
+    .description h4 { font-size: 0.75rem; color: #444; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .description p { color: #666; line-height: 1.6; font-size: 0.9rem; }
+
+    footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid #1a1a1a; color: #444; font-size: 0.8rem; margin-top: 3rem; }
+
+    @media (max-width: 700px) {
+      .container { grid-template-columns: 1fr; gap: 2rem; }
+      .album-art-section { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">market<span>.place</span></a>
+    <a href="/browse.html">← Browse</a>
+  </nav>
+
+  <div class="container">
+    <div class="album-art-section">
+      <div class="album-art" id="albumArt">🎵</div>
+    </div>
+
+    <div class="album-info-section">
+      <div class="breadcrumb" id="breadcrumb">
+        <a href="/browse.html">Browse</a> / <span id="breadcrumbArtist">Loading...</span>
+      </div>
+      <h1 class="album-title" id="albumTitle">Loading...</h1>
+      <div class="artist-name" id="artistName">Loading...</div>
+      <div class="album-meta" id="albumMeta"></div>
+
+      <div class="tracklist" id="tracklist">
+        <h3>Tracklist</h3>
+        <div id="tracksContainer">Loading tracks...</div>
+      </div>
+
+      <div class="buy-section">
+        <div class="price-label">Price</div>
+        <div class="price" id="price">$0.00</div>
+        <div class="price-note" id="priceNote">Digital download</div>
+        <div class="email-input">
+          <label for="email">Your email for delivery</label>
+          <input type="email" id="email" placeholder="you@example.com">
+        </div>
+        <button class="buy-btn" id="buyBtn" onclick="handleBuy()">Buy Now</button>
+        <p class="secure-note">🔒 Secure payment via Stripe</p>
+      </div>
+
+      <div class="description" id="description" style="display:none;">
+        <h4>About this album</h4>
+        <p id="descriptionText"></p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Powered by Music Marketplace</p>
+  </footer>
+
+  <script>
+    let albumData = null;
+    let currentAudio = null;
+
+    function getAlbumId() {
+      const pathParts = window.location.pathname.split('/');
+      const filename = pathParts[pathParts.length - 1];
+      return filename.replace('.html', '');
+    }
+
+    async function loadAlbum() {
+      const albumId = getAlbumId();
+      try {
+        const res = await fetch(`/api/albums/${albumId}`);
+        if (!res.ok) throw new Error('Album not found');
+        albumData = await res.json();
+
+        document.title = `${albumData.title} — Music Marketplace`;
+
+        // Album art
+        const artEl = document.getElementById('albumArt');
+        if (albumData.cover_image_url) {
+          artEl.innerHTML = `<img src="${escapeHtml(albumData.cover_image_url)}" alt="">`;
+        }
+
+        // Info
+        document.getElementById('albumTitle').textContent = albumData.title;
+        document.getElementById('artistName').innerHTML = `<a href="/artist/${escapeHtml(albumData.artist_slug)}.html">${escapeHtml(albumData.artist_name)}</a>`;
+        document.getElementById('breadcrumbArtist').innerHTML = `<a href="/artist/${escapeHtml(albumData.artist_slug)}.html">${escapeHtml(albumData.artist_name)}</a>`;
+
+        // Meta
+        const meta = document.getElementById('albumMeta');
+        if (albumData.release_date) meta.innerHTML += `<span>${formatDate(albumData.release_date)}</span>`;
+        if (albumData.track_count) meta.innerHTML += `<span>${albumData.track_count} tracks</span>`;
+
+        // Price
+        const priceEl = document.getElementById('price');
+        const priceNote = document.getElementById('priceNote');
+        if (albumData.is_name_your_price) {
+          priceEl.textContent = 'Name your price';
+          priceNote.textContent = 'Minimum $5 · Pay what you want';
+        } else {
+          priceEl.textContent = '$' + (albumData.price_cents / 100).toFixed(2);
+          priceNote.textContent = 'Digital download';
+        }
+
+        // Tracks
+        renderTracks(albumData.tracks || []);
+
+        // Description
+        if (albumData.description) {
+          document.getElementById('description').style.display = 'block';
+          document.getElementById('descriptionText').textContent = albumData.description;
+        }
+      } catch (e) {
+        document.getElementById('albumTitle').textContent = 'Album Not Found';
+        document.getElementById('tracksContainer').textContent = 'Could not load album.';
+      }
+    }
+
+    function renderTracks(tracks) {
+      const container = document.getElementById('tracksContainer');
+      if (tracks.length === 0) {
+        container.innerHTML = '<div style="color:#444;padding:1rem 0;">No tracks yet.</div>';
+        return;
+      }
+      container.innerHTML = tracks.map((track, i) => `
+        <div class="track">
+          <span class="track-num">${String(track.track_number).padStart(2, '0')}</span>
+          <span class="track-title">${escapeHtml(track.title)}</span>
+          ${track.duration_seconds ? `<span class="track-duration">${formatDuration(track.duration_seconds)}</span>` : ''}
+          ${track.is_preview_available && track.audio_preview_url ? `
+            <button class="track-preview" id="preview-${track.id}" onclick="togglePreview('${track.id}', '${escapeHtml(track.audio_preview_url)}')">
+              <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+            </button>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function togglePreview(trackId, audioUrl) {
+      const btn = document.getElementById('preview-' + trackId);
+      if (currentAudio && currentAudio.trackId === trackId) {
+        currentAudio.pause();
+        currentAudio = null;
+        btn.classList.remove('playing');
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+      } else {
+        if (currentAudio) {
+          const prevBtn = document.getElementById('preview-' + currentAudio.trackId);
+          if (prevBtn) { prevBtn.classList.remove('playing'); prevBtn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>'; }
+          currentAudio.pause();
+        }
+        currentAudio = new Audio(audioUrl);
+        currentAudio.trackId = trackId;
+        currentAudio.play();
+        currentAudio.onended = () => {
+          btn.classList.remove('playing');
+          btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+          currentAudio = null;
+        };
+        btn.classList.add('playing');
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+      }
+    }
+
+    async function handleBuy() {
+      const email = document.getElementById('email').value.trim();
+      const btn = document.getElementById('buyBtn');
+
+      if (!email) { alert('Please enter your email for delivery.'); return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Redirecting...';
+
+      try {
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            album_id: albumData.id,
+            email,
+            amount: albumData.is_name_your_price ? null : albumData.price_cents
+          })
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error(data.error || 'Checkout failed');
+        }
+      } catch (e) {
+        alert('Error: ' + (e.message || 'Something went wrong'));
+        btn.disabled = false;
+        btn.textContent = 'Buy Now';
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function formatDuration(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return `${m}:${String(s).padStart(2, '0')}`;
+    }
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    loadAlbum();
+  </script>
+
+</body>
+</html>

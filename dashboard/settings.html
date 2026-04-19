@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — Artist Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; background: #111; border-right: 1px solid #1a1a1a; padding: 2rem 0; flex-shrink: 0; position: fixed; height: 100vh; }
+    .sidebar-logo { padding: 0 1.5rem 2rem; font-size: 1.1rem; font-weight: 800; border-bottom: 1px solid #1a1a1a; margin-bottom: 1.5rem; }
+    .sidebar-logo span { color: #555; }
+    .sidebar-nav { display: flex; flex-direction: column; }
+    .nav-item { padding: 0.75rem 1.5rem; font-size: 0.9rem; color: #888; display: flex; align-items: center; gap: 0.75rem; transition: all 0.15s; }
+    .nav-item:hover { color: #fff; background: #161616; }
+    .nav-item.active { color: #fff; background: #1a1a1a; border-right: 2px solid #fff; }
+    .main { flex: 1; margin-left: 240px; padding: 2rem 3rem; max-width: 700px; }
+    .header { margin-bottom: 2.5rem; }
+    .header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; }
+
+    .form-section { margin-bottom: 2.5rem; }
+    .section-title { font-size: 0.75rem; color: #555; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid #1a1a1a; }
+    
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 0.5rem; }
+    input, textarea { width: 100%; padding: 0.85rem 1rem; background: #111; border: 1.5px solid #222; border-radius: 8px; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.15s; }
+    input:focus, textarea:focus { border-color: #444; }
+    .hint { font-size: 0.75rem; color: #444; margin-top: 0.4rem; }
+    .hint.error { color: #e74c3c; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .avatar-upload { display: flex; align-items: center; gap: 1.5rem; }
+    .avatar-preview { width: 80px; height: 80px; border-radius: 50%; background: #111; border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-size: 2rem; overflow: hidden; flex-shrink: 0; }
+    .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+    .btn { padding: 0.85rem 1.5rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.15s; border: none; }
+    .btn-primary { background: #fff; color: #000; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Stripe Section */
+    .stripe-card { background: #111; border: 1px solid #1a1a1a; border-radius: 12px; padding: 1.5rem; }
+    .stripe-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .stripe-title { font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+    .stripe-connected { background: #0f2a1a; color: #2ecc71; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.8rem; }
+    .stripe-disconnected { background: #2a1a1a; color: #e74c3c; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.8rem; }
+    .stripe-desc { font-size: 0.85rem; color: #666; margin-bottom: 1rem; }
+    .stripe-btn { background: #635bff; color: #fff; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; }
+    .stripe-btn:hover { opacity: 0.85; }
+    .stripe-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    #message { margin-top: 1rem; font-size: 0.85rem; }
+    #message.success { color: #2ecc71; }
+    #message.error { color: #e74c3c; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">market<span>.place</span></div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard/" class="nav-item">📊 Overview</a>
+        <a href="/dashboard/albums.html" class="nav-item">💿 Albums</a>
+        <a href="/dashboard/albums-new.html" class="nav-item">➕ New Album</a>
+        <a href="/dashboard/orders.html" class="nav-item">📦 Orders</a>
+        <a href="/dashboard/settings.html" class="nav-item active">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="header">
+        <h1>Settings</h1>
+      </div>
+
+      <!-- Profile Section -->
+      <div class="form-section">
+        <div class="section-title">Artist Profile</div>
+        
+        <div class="form-group">
+          <label>Artist / Band Name</label>
+          <input type="text" id="artistName" placeholder="Your name">
+        </div>
+
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea id="bio" placeholder="Tell fans about yourself..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Avatar</label>
+          <div class="avatar-upload">
+            <div class="avatar-preview" id="avatarPreview">🎵</div>
+            <div>
+              <input type="file" id="avatarInput" accept="image/*" onchange="previewAvatar(this)">
+              <button type="button" class="cover-upload-btn" onclick="document.getElementById('avatarInput').click()">Upload Avatar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group">
+            <label>Twitter Handle</label>
+            <input type="text" id="twitter" placeholder="username (without @)">
+          </div>
+          <div class="form-group">
+            <label>Instagram Handle</label>
+            <input type="text" id="instagram" placeholder="username">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Website</label>
+          <input type="url" id="website" placeholder="https://yoursite.com">
+        </div>
+
+        <button class="btn btn-primary" id="saveBtn" onclick="saveProfile()">Save Changes</button>
+      </div>
+
+      <!-- Stripe Connect Section -->
+      <div class="form-section">
+        <div class="section-title">Payments</div>
+        <div class="stripe-card">
+          <div class="stripe-header">
+            <span class="stripe-title">Stripe Connect</span>
+            <span id="stripeBadge" class="stripe-disconnected">Not connected</span>
+          </div>
+          <p class="stripe-desc">Connect your Stripe account to receive payments directly to your bank. No monthly fees, no platform cut — you keep 100%.</p>
+          <button class="stripe-btn" id="stripeBtn" onclick="connectStripe()">Connect Stripe Account</button>
+        </div>
+      </div>
+
+      <!-- Store URL Section -->
+      <div class="form-section">
+        <div class="section-title">Store URL</div>
+        <div class="form-group">
+          <label>Your store URL</label>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span style="color:#555;font-size:0.9rem;">market.place/artist/</span>
+            <input type="text" id="slugInput" placeholder="your-name" style="flex:1;" oninput="validateSlug()">
+          </div>
+          <p class="hint" id="slugHint">Only lowercase letters, numbers, and hyphens</p>
+        </div>
+        <button class="btn btn-primary" onclick="saveSlug()">Update URL</button>
+      </div>
+
+      <div id="message"></div>
+    </main>
+  </div>
+
+  <style>
+    .cover-upload-btn { background: #1a1a1a; border: 1px solid #333; padding: 0.4rem 0.8rem; border-radius: 4px; color: #888; font-size: 0.8rem; cursor: pointer; display: inline-block; }
+    .cover-upload-btn:hover { border-color: #555; color: #fff; }
+  </style>
+
+  <script>
+    let artistData = null;
+    let avatarFile = null;
+
+    async function loadSettings() {
+      const token = localStorage.getItem('auth_token');
+      if (!token) { window.location.href = '/login.html'; return; }
+
+      try {
+        const res = await fetch('/api/artists/me', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!res.ok) throw new Error();
+        artistData = await res.json();
+
+        // Populate form
+        document.getElementById('artistName').value = artistData.name || '';
+        document.getElementById('bio').value = artistData.bio || '';
+        document.getElementById('twitter').value = artistData.social_links?.twitter || '';
+        document.getElementById('instagram').value = artistData.social_links?.instagram || '';
+        document.getElementById('website').value = artistData.social_links?.website || '';
+        document.getElementById('slugInput').value = artistData.slug || '';
+
+        // Avatar
+        if (artistData.avatar_url) {
+          document.getElementById('avatarPreview').innerHTML = `<img src="${artistData.avatar_url}" alt="">`;
+        }
+
+        // Stripe status
+        if (artistData.stripe_onboarding_complete) {
+          document.getElementById('stripeBadge').className = 'stripe-connected';
+          document.getElementById('stripeBadge').textContent = 'Connected';
+          document.getElementById('stripeBtn').textContent = 'Manage Stripe Account';
+        }
+      } catch (e) {
+        // Handle error
+      }
+    }
+
+    async function saveProfile() {
+      const token = localStorage.getItem('auth_token');
+      const btn = document.getElementById('saveBtn');
+      const msg = document.getElementById('message');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+      msg.textContent = '';
+      msg.className = '';
+
+      try {
+        const res = await fetch('/api/artists/me', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({
+            name: document.getElementById('artistName').value.trim(),
+            bio: document.getElementById('bio').value.trim(),
+            social_links: {
+              twitter: document.getElementById('twitter').value.trim(),
+              instagram: document.getElementById('instagram').value.trim(),
+              website: document.getElementById('website').value.trim()
+            }
+          })
+        });
+        if (!res.ok) throw new Error('Failed to save');
+        msg.textContent = 'Profile saved!';
+        msg.className = 'success';
+      } catch (e) {
+        msg.textContent = 'Error saving profile';
+        msg.className = 'error';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Changes';
+      }
+    }
+
+    async function connectStripe() {
+      const token = localStorage.getItem('auth_token');
+      try {
+        const res = await fetch('/api/stripe/connect', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+        if (data.url) window.location.href = data.url;
+      } catch (e) {
+        alert('Could not connect to Stripe. Please try again.');
+      }
+    }
+
+    function previewAvatar(input) {
+      if (input.files && input.files[0]) {
+        avatarFile = input.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById('avatarPreview').innerHTML = `<img src="${e.target.result}" alt="">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function validateSlug() {
+      const val = document.getElementById('slugInput').value
+        .toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
+      document.getElementById('slugInput').value = val;
+      const hint = document.getElementById('slugHint');
+      if (val.includes('--') || (val.length > 0 && val.length < 3)) {
+        hint.textContent = 'URL must be at least 3 characters with no consecutive hyphens';
+        hint.className = 'hint error';
+      } else {
+        hint.textContent = 'Only lowercase letters, numbers, and hyphens';
+        hint.className = 'hint';
+      }
+    }
+
+    async function saveSlug() {
+      const token = localStorage.getItem('auth_token');
+      const slug = document.getElementById('slugInput').value.trim();
+      if (!slug || slug.length < 3) {
+        alert('URL must be at least 3 characters');
+        return;
+      }
+      try {
+        const res = await fetch('/api/artists/me', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ slug })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to update URL');
+        alert('URL updated! Your store is now at market.place/artist/' + slug);
+      } catch (e) {
+        alert(e.message || 'Error updating URL');
+      }
+    }
+
+    loadSettings();
+  </script>
+
+</body>
+</html>

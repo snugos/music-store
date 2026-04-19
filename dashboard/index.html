@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artist Dashboard — Music Marketplace</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Layout */
+    .layout { display: flex; min-height: 100vh; }
+    
+    /* Sidebar */
+    .sidebar { width: 240px; background: #111; border-right: 1px solid #1a1a1a; padding: 2rem 0; flex-shrink: 0; position: fixed; height: 100vh; overflow-y: auto; }
+    .sidebar-logo { padding: 0 1.5rem 2rem; font-size: 1.1rem; font-weight: 800; border-bottom: 1px solid #1a1a1a; margin-bottom: 1.5rem; }
+    .sidebar-logo span { color: #555; }
+    .sidebar-nav { display: flex; flex-direction: column; }
+    .nav-item { padding: 0.75rem 1.5rem; font-size: 0.9rem; color: #888; display: flex; align-items: center; gap: 0.75rem; transition: all 0.15s; }
+    .nav-item:hover { color: #fff; background: #161616; }
+    .nav-item.active { color: #fff; background: #1a1a1a; border-right: 2px solid #fff; }
+    .nav-item .icon { font-size: 1.1rem; }
+
+    /* Main Content */
+    .main { flex: 1; margin-left: 240px; padding: 2rem 3rem; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+    .header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; }
+    .header-actions { display: flex; gap: 0.75rem; }
+    .btn { padding: 0.6rem 1.2rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .btn-primary { background: #fff; color: #000; border: none; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-secondary { background: transparent; border: 1px solid #333; color: #888; }
+    .btn-secondary:hover { border-color: #555; color: #fff; }
+
+    /* Stats */
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
+    .stat-card { background: #111; border-radius: 12px; padding: 1.5rem; border: 1px solid #1a1a1a; }
+    .stat-label { font-size: 0.75rem; color: #555; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+    .stat-value { font-size: 2rem; font-weight: 700; }
+    .stat-note { font-size: 0.75rem; color: #444; margin-top: 0.25rem; }
+
+    /* Cards */
+    .card { background: #111; border-radius: 12px; border: 1px solid #1a1a1a; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .card-title { font-size: 1rem; font-weight: 600; }
+    .card-link { font-size: 0.8rem; color: #666; }
+    .card-link:hover { color: #fff; }
+
+    /* Album List */
+    .album-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .album-item { display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: #0f0f0f; border-radius: 8px; transition: background 0.15s; cursor: pointer; }
+    .album-item:hover { background: #161616; }
+    .album-thumb { width: 50px; height: 50px; border-radius: 6px; background: linear-gradient(135deg, #1a1a2e, #16213e); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; overflow: hidden; }
+    .album-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .album-info { flex: 1; min-width: 0; }
+    .album-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .album-meta { font-size: 0.75rem; color: #555; }
+    .album-status { font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 4px; }
+    .status-published { background: #0f2a1a; color: #2ecc71; }
+    .status-draft { background: #1a1a1a; color: #555; }
+
+    /* Recent Orders */
+    .orders-table { width: 100%; border-collapse: collapse; }
+    .orders-table th { text-align: left; font-size: 0.75rem; color: #444; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.5rem 0.75rem; border-bottom: 1px solid #1a1a1a; }
+    .orders-table td { padding: 0.85rem 0.75rem; font-size: 0.85rem; border-bottom: 1px solid #111; }
+    .orders-table tr:hover td { background: #0f0f0f; }
+    .status-badge { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; }
+    .status-badge.completed { background: #0f2a1a; color: #2ecc71; }
+    .status-badge.pending { background: #2a2a0a; color: #f1c40f; }
+
+    /* Stripe Connect */
+    .stripe-banner { background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 12px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .stripe-info h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+    .stripe-info p { font-size: 0.8rem; color: #888; }
+    .stripe-connect-btn { background: #635bff; color: #fff; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; transition: opacity 0.15s; }
+    .stripe-connect-btn:hover { opacity: 0.85; }
+    .stripe-connected { background: #0f2a1a; color: #2ecc71; padding: 0.75rem 1.5rem; border-radius: 6px; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">market<span>.place</span></div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard/" class="nav-item active">
+          <span class="icon">📊</span> Overview
+        </a>
+        <a href="/dashboard/albums.html" class="nav-item">
+          <span class="icon">💿</span> Albums
+        </a>
+        <a href="/dashboard/albums-new.html" class="nav-item">
+          <span class="icon">➕</span> New Album
+        </a>
+        <a href="/dashboard/orders.html" class="nav-item">
+          <span class="icon">📦</span> Orders
+        </a>
+        <a href="/dashboard/settings.html" class="nav-item">
+          <span class="icon">⚙️</span> Settings
+        </a>
+        <a href="/" class="nav-item">
+          <span class="icon">←</span> Back to Store
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="header">
+        <h1>Dashboard</h1>
+        <div class="header-actions">
+          <a href="/dashboard/albums-new.html" class="btn btn-primary">+ New Album</a>
+        </div>
+      </div>
+
+      <!-- Stripe Connect Status -->
+      <div class="stripe-banner" id="stripeBanner">
+        <div class="stripe-info">
+          <h3>Stripe Connect</h3>
+          <p id="stripeStatusText">Connect Stripe to receive payments directly to your bank.</p>
+        </div>
+        <div id="stripeAction">
+          <button class="stripe-connect-btn" onclick="connectStripe()">Connect Stripe</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-value" id="totalRevenue">$0</div>
+          <div class="stat-note">All time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Albums</div>
+          <div class="stat-value" id="totalAlbums">0</div>
+          <div class="stat-note" id="publishedCount">0 published</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Orders</div>
+          <div class="stat-value" id="totalOrders">0</div>
+          <div class="stat-note">All time</div>
+        </div>
+      </div>
+
+      <!-- Albums -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Your Albums</h2>
+          <a href="/dashboard/albums.html" class="card-link">View all →</a>
+        </div>
+        <div class="album-list" id="albumList">
+          <div style="color:#444;padding:1rem;">Loading...</div>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Recent Orders</h2>
+          <a href="/dashboard/orders.html" class="card-link">View all →</a>
+        </div>
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Album</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody">
+            <tr><td colspan="5" style="color:#444;padding:1rem;text-align:center;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const API = '';
+    let artistData = null;
+
+    async function loadDashboard() {
+      // Check auth
+      const token = localStorage.getItem('auth_token');
+      if (!token) { window.location.href = '/login.html'; return; }
+
+      try {
+        // Load artist data
+        const artistRes = await fetch('/api/artists/me', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!artistRes.ok) throw new Error('Not authenticated');
+        artistData = await artistRes.json();
+
+        // Stripe status
+        if (artistData.stripe_onboarding_complete) {
+          document.getElementById('stripeStatusText').textContent = 'Your Stripe account is connected and ready to receive payments.';
+          document.getElementById('stripeAction').innerHTML = '<div class="stripe-connected">✓ Connected</div>';
+        }
+
+        // Load albums
+        loadAlbums();
+        // Load orders
+        loadOrders();
+        // Load stats
+        loadStats();
+      } catch (e) {
+        localStorage.removeItem('auth_token');
+        window.location.href = '/login.html';
+      }
+    }
+
+    async function loadAlbums() {
+      try {
+        const res = await fetch('/api/albums?mine=true', {
+          headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth_token') }
+        });
+        const data = await res.json();
+        const albums = data.albums || [];
+
+        document.getElementById('totalAlbums').textContent = albums.length;
+        document.getElementById('publishedCount').textContent = albums.filter(a => a.is_published).length + ' published';
+
+        const list = document.getElementById('albumList');
+        if (albums.length === 0) {
+          list.innerHTML = '<div style="color:#444;padding:1rem;">No albums yet. <a href="/dashboard/albums-new.html" style="color:#888;">Create your first album →</a></div>';
+          return;
+        }
+
+        list.innerHTML = albums.slice(0, 5).map(album => `
+          <a href="/dashboard/albums-edit.html?id=${album.id}" class="album-item">
+            <div class="album-thumb">${album.cover_image_url ? '<img src="'+album.cover_image_url+'" alt="">' : '💿'}</div>
+            <div class="album-info">
+              <div class="album-name">${escapeHtml(album.title)}</div>
+              <div class="album-meta">${album.track_count || 0} tracks · ${album.is_name_your_price ? 'Name your price' : '$' + (album.price_cents/100).toFixed(2)}</div>
+            </div>
+            <span class="album-status ${album.is_published ? 'status-published' : 'status-draft'}">${album.is_published ? 'Published' : 'Draft'}</span>
+          </a>
+        `).join('');
+      } catch (e) {
+        document.getElementById('albumList').innerHTML = '<div style="color:#444;padding:1rem;">Could not load albums.</div>';
+      }
+    }
+
+    async function loadOrders() {
+      try {
+        const res = await fetch('/api/orders', {
+          headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth_token') }
+        });
+        const data = await res.json();
+        const orders = data.orders || [];
+
+        document.getElementById('totalOrders').textContent = orders.length;
+
+        let totalRevenue = 0;
+        orders.forEach(o => { if (o.status === 'completed') totalRevenue += o.artist_payout_cents; });
+        document.getElementById('totalRevenue').textContent = '$' + (totalRevenue / 100).toFixed(2);
+
+        const tbody = document.getElementById('ordersBody');
+        if (orders.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="color:#444;padding:1rem;text-align:center;">No orders yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = orders.slice(0, 5).map(order => `
+          <tr>
+            <td>${formatDate(order.created_at)}</td>
+            <td>${escapeHtml(order.album_title || 'Unknown')}</td>
+            <td>${escapeHtml(order.customer_email)}</td>
+            <td>$${(order.artist_payout_cents / 100).toFixed(2)}</td>
+            <td><span class="status-badge ${order.status}">${order.status}</span></td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        document.getElementById('ordersBody').innerHTML = '<tr><td colspan="5" style="color:#444;padding:1rem;text-align:center;">Could not load orders.</td></tr>';
+      }
+    }
+
+    function loadStats() {
+      // Stats are loaded in loadOrders
+    }
+
+    async function connectStripe() {
+      try {
+        const res = await fetch('/api/stripe/connect', {
+          headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth_token') }
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        }
+      } catch (e) {
+        alert('Could not connect to Stripe. Please try again.');
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function formatDate(dateStr) {
+      return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    loadDashboard();
+  </script>
+
+</body>
+</html>

@@ -1,59 +1,97 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { Context } from 'hono';
+import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia',
-});
+const supabase = createClient(process.env.SUPABASE_URL || '', process.env.SUPABASE_ANON_KEY || '');
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2024-12-18.acacia' });
+const BASE_URL = process.env.BASE_URL || 'https://fuzzymoss.zo.space';
 
-const BASE_URL = process.env.BASE_URL || `https://${process.env.VERCEL_URL || 'localhost'}`;
-const CASHAPP_USERNAME = 'snugsworth';
+// POST /api/checkout - Create Stripe Checkout session for album purchase
+export async function createCheckoutSession(c: Context) {
+  const body = await c.req.json();
+  const { album_id, email, amount } = body;
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (!album_id) {
+    return c.json({ error: 'album_id is required' }, 400);
   }
 
-  const { amount, email, hasCD } = req.body;
+  // Get album and artist
+  const { data: album, error: albumError } = await supabase
+    .from('albums')
+    .select(`
+      id, title, cover_image_url, price_cents, is_name_your_price, minimum_price_cents,
+      artist_id,
+      artists!inner(id, name, stripe_account_id, stripe_onboarding_complete)
+    `)
+    .eq('id', album_id)
+    .single();
 
-  if (!amount || amount < 5) {
-    return res.status(400).json({ error: 'Minimum donation is $5' });
+  if (albumError || !album) {
+    return c.json({ error: 'Album not found' }, 404);
   }
 
-  // Direct CashApp link
-  if (Number(amount) < 5) {
-    const cashappUrl = `https://cash.app/$/${CASHAPP_USERNAME}/${amount}`;
-    return res.status(200).json({ cashappUrl, type: 'cashapp' });
+  const artist = album.artists;
+  if (!artist.stripe_account_id || !artist.stripe_onboarding_complete) {
+    return c.json({ error: 'This artist has not set up payments yet' }, 400);
   }
 
+  // Determine price
+  let priceInCents: number;
+  if (album.is_name_your_price) {
+    priceInCents = amount ? Math.round(amount * 100) : album.minimum_price_cents || 500;
+    if (priceInCents < (album.minimum_price_cents || 500)) {
+      priceInCents = album.minimum_price_cents || 500;
+    }
+  } else {
+    priceInCents = album.price_cents;
+    if (priceInCents <= 0) priceInCents = 500; // Default minimum
+  }
+
+  // Create Stripe Checkout session
   try {
-    const session = await stripe.checkout.sessions.create({
+    const sessionConfig: any = {
       payment_method_types: ['card'],
       mode: 'payment',
       customer_email: email || undefined,
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            unit_amount: Math.round(amount * 100),
-            product_data: {
-              name: 'LISTEN — Digital Download',
-              description: hasCD
-                ? 'Digital album + CD mailed to you'
-                : 'Digital album download (MP3 + WAV)',
-              images: [`${BASE_URL}/assets/album-cover.jpg`],
-            },
-          },
-          quantity: 1,
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          unit_amount: priceInCents,
+          product_data: {
+            name: `${album.title} — ${artist.name}`,
+            description: 'Digital album download',
+            images: album.cover_image_url ? [album.cover_image_url] : []
+          }
         },
-      ],
-      metadata: { hasCD: hasCD ? 'true' : 'false' },
-      success_url: `${BASE_URL}/success.html?session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(email || '')}`,
+        quantity: 1
+      }],
+      metadata: {
+        album_id: album.id,
+        artist_id: artist.id
+      },
+      success_url: `${BASE_URL}/success.html?session_id={CHECKOUT_SESSION_ID}&album=${album.id}`,
       cancel_url: `${BASE_URL}/cancel.html`,
-    });
+      payment_intent_data: {
+        application_fee_amount: 0, // No platform fee
+        transfer_data: {
+          destination: artist.stripe_account_id
+        }
+      }
+    };
 
-    return res.status(200).json({ url: session.url, sessionId: session.id, type: 'stripe' });
+    // If no name-your-price, use fixed price
+    if (!album.is_name_your_price) {
+      delete sessionConfig.payment_intent_data;
+      sessionConfig.line_items[0].price_data.unit_amount = album.price_cents || 500;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig);
+
+    return c.json({ url: session.url, sessionId: session.id });
   } catch (err: any) {
-    console.error('Stripe error:', err);
-    return res.status(500).json({ error: err.message });
+    console.error('Stripe checkout error:', err);
+    return c.json({ error: err.message }, 500);
   }
 }
+
+export { supabase };

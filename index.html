@@ -3,165 +3,183 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LISTEN — Snugsworth</title>
+  <title>Music Marketplace — Buy & Sell Independent Music</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #0a0a0a; color: #fff; font-family: -apple-system, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; }
-    .hero { text-align: center; margin-bottom: 2.5rem; }
-    .hero img { width: 260px; border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); margin-bottom: 1.5rem; }
-    h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.25rem; background: linear-gradient(135deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .tagline { font-size: 1rem; color: #666; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1.5rem; }
-    .tracks { background: #111; border-radius: 10px; padding: 1.5rem; margin-bottom: 2rem; width: 100%; max-width: 440px; }
-    .tracks h2 { font-size: 0.75rem; color: #444; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
-    .track { display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.9rem; color: #ccc; border-bottom: 1px solid #1a1a1a; }
-    .track:last-child { border-bottom: none; }
-    .track-num { color: #333; margin-right: 0.75rem; font-size: 0.8rem; }
-    .section { width: 100%; max-width: 440px; margin-bottom: 1.5rem; }
-    .section h3 { font-size: 0.75rem; color: #444; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem; }
-    .amounts { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
-    .price-btn { flex: 1; min-width: 60px; padding: 0.75rem 0.5rem; border: 1.5px solid #222; background: #111; color: #fff; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.15s; }
-    .price-btn:hover { border-color: #444; background: #161616; }
-    .price-btn.selected { border-color: #fff; background: #1a1a1a; }
-    .price-btn.adjust { flex: 0; min-width: 44px; font-size: 1.2rem; }
-    .curr { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; display: block; }
-    .custom-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
-    .custom-row input { flex: 1; padding: 0.75rem; background: #111; border: 1.5px solid #222; border-radius: 6px; color: #fff; font-size: 1rem; outline: none; }
-    .custom-row input:focus { border-color: #444; }
-    .cd-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; font-size: 0.9rem; color: #999; cursor: pointer; }
-    .cd-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: #fff; cursor: pointer; }
-    .email-row { margin-bottom: 1rem; }
-    .email-row label { display: block; font-size: 0.75rem; color: #444; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
-    .email-row input { width: 100%; padding: 0.75rem; background: #111; border: 1.5px solid #222; border-radius: 6px; color: #fff; font-size: 1rem; outline: none; }
-    .email-row input:focus { border-color: #444; }
-    .submit-btn { width: 100%; padding: 1rem; background: #fff; color: #000; border: none; border-radius: 6px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s; margin-bottom: 0.75rem; }
-    .submit-btn:hover { opacity: 0.85; }
-    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .alt-header { font-size: 0.7rem; color: #333; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; margin: 1rem 0 0.5rem; }
-    .alt-btns { display: flex; gap: 0.5rem; }
-    .alt-btn { flex: 1; padding: 0.75rem; background: #111; border: 1.5px solid #1e1e1e; border-radius: 6px; color: #888; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; display: block; transition: all 0.15s; }
-    .alt-btn:hover { border-color: #333; color: #fff; }
-    .cashapp-btn { color: #00d26a; border-color: #00d26a33; }
-    .cashapp-btn:hover { background: #00d26a11; }
-    .note { font-size: 0.75rem; color: #333; text-align: center; margin-top: 0.5rem; }
-    .divider { width: 100%; max-width: 440px; height: 1px; background: #161616; margin: 0.5rem 0; }
-    .cancel-btn { display: block; width: 100%; max-width: 440px; padding: 0.75rem; background: transparent; border: 1px solid #222; color: #444; border-radius: 6px; font-size: 0.85rem; cursor: pointer; text-align: center; text-decoration: none; transition: all 0.15s; }
-    .cancel-btn:hover { border-color: #333; color: #666; }
-    .footer { margin-top: auto; padding-top: 2rem; text-align: center; font-size: 0.75rem; color: #2a2a2a; }
-    .footer a { color: #3a3a3a; text-decoration: none; }
-    .footer a:hover { color: #555; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    
+    /* Nav */
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; max-width: 1200px; margin: 0 auto; }
+    .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
+    .logo span { color: #666; }
+    .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; color: #666; }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta { background: #fff; color: #000; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; font-size: 0.85rem; }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* Hero */
+    .hero { text-align: center; padding: 6rem 2rem; max-width: 700px; margin: 0 auto; }
+    .hero h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.05em; line-height: 1.1; margin-bottom: 1.2rem; background: linear-gradient(135deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.15rem; color: #666; line-height: 1.6; margin-bottom: 2.5rem; }
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; }
+    .btn-primary { background: #fff; color: #000; padding: 0.9rem 2rem; border-radius: 8px; font-weight: 600; }
+    .btn-secondary { background: #1a1a1a; border: 1px solid #333; padding: 0.9rem 2rem; border-radius: 8px; color: #ccc; }
+
+    /* Artists Section */
+    .section { padding: 4rem 2rem; max-width: 1200px; margin: 0 auto; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .section-title { font-size: 1.5rem; font-weight: 700; }
+    .section-link { font-size: 0.85rem; color: #666; }
+    .section-link:hover { color: #fff; }
+
+    /* Artist Grid */
+    .artist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
+    .artist-card { background: #111; border-radius: 12px; overflow: hidden; transition: transform 0.2s; cursor: pointer; }
+    .artist-card:hover { transform: translateY(-4px); }
+    .artist-card-cover { height: 160px; background: linear-gradient(135deg, #1a1a2e, #16213e); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+    .artist-card-info { padding: 1rem; }
+    .artist-card-name { font-weight: 600; margin-bottom: 0.25rem; }
+    .artist-card-meta { font-size: 0.8rem; color: #666; }
+
+    /* Album Grid */
+    .album-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; }
+    .album-card { background: #111; border-radius: 10px; overflow: hidden; transition: transform 0.2s; cursor: pointer; }
+    .album-card:hover { transform: translateY(-3px); }
+    .album-card-art { aspect-ratio: 1; background: linear-gradient(135deg, #2a1a1a, #3a2a1a); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+    .album-card-info { padding: 0.85rem; }
+    .album-card-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.2rem; }
+    .album-card-artist { font-size: 0.75rem; color: #666; margin-bottom: 0.4rem; }
+    .album-card-price { font-size: 0.8rem; color: #999; }
+
+    /* Browse/Categories */
+    .categories { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .category-tag { background: #1a1a1a; border: 1px solid #333; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; color: #999; cursor: pointer; transition: all 0.15s; }
+    .category-tag:hover, .category-tag.active { border-color: #fff; color: #fff; }
+
+    /* Footer */
+    footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid #1a1a1a; color: #444; font-size: 0.8rem; margin-top: 2rem; }
+    footer a { color: #666; }
+    footer a:hover { color: #fff; }
+
+    /* Featured Banner */
+    .featured-banner { background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%); border-radius: 16px; padding: 3rem; margin-bottom: 3rem; display: flex; gap: 2rem; align-items: center; }
+    .featured-art { width: 200px; height: 200px; background: #222; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 4rem; flex-shrink: 0; }
+    .featured-info { flex: 1; }
+    .featured-label { font-size: 0.7rem; color: #888; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .featured-title { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .featured-artist { color: #888; margin-bottom: 1rem; }
+    .featured-price { font-size: 1.2rem; font-weight: 600; }
   </style>
 </head>
 <body>
 
-  <div class="hero">
-    <img src="assets/album-cover.jpg" alt="LISTEN — Snugsworth" onerror="this.style.display='none'">
-    <h1>LISTEN</h1>
-    <div class="tagline">Snugsworth &nbsp;·&nbsp; Beat Tape &nbsp;·&nbsp; 2026</div>
-  </div>
+  <nav>
+    <a href="/" class="logo">market<span>.place</span></a>
+    <div class="nav-links">
+      <a href="/browse.html">Browse</a>
+      <a href="/register.html">Sell Music</a>
+    </div>
+    <a href="/login.html" class="nav-cta">Artist Login</a>
+  </nav>
 
-  <div class="tracks">
-    <h2>Tracklist</h2>
-    <div class="track"><span class="track-num">01</span><span>INTROVERT</span></div>
-    <div class="track"><span class="track-num">02</span><span>BRANDON</span></div>
-    <div class="track"><span class="track-num">03</span><span>NO ENCORE</span></div>
-    <div class="track"><span class="track-num">04</span><span>WENDY SWERVE</span></div>
-    <div class="track"><span class="track-num">05</span><span>CHUNKY</span></div>
-    <div class="track"><span class="track-num">06</span><span>SLIMthick</span></div>
-    <div class="track"><span class="track-num">07</span><span>RBS</span></div>
-    <div class="track"><span class="track-num">08</span><span>ALL THE TIME</span></div>
-    <div class="track"><span class="track-num">09</span><span>OUTROVERT</span></div>
+  <div class="hero">
+    <h1>Independent Music, Direct from Artists</h1>
+    <p>Buy albums directly from the artists. No platform fees. Your money goes straight to the creators.</p>
+    <div class="hero-actions">
+      <a href="/browse.html" class="btn-primary">Browse Music</a>
+      <a href="/register.html" class="btn-secondary">Start Selling</a>
+    </div>
   </div>
 
   <div class="section">
-    <h3>Pay What You Want</h3>
-    <div class="amounts">
-      <button class="price-btn selected" data-amt="5">$5</button>
-      <button class="price-btn" data-amt="10">$10</button>
-      <button class="price-btn" data-amt="15">$15</button>
-      <button class="price-btn" data-amt="20">$20</button>
-      <button class="price-btn" data-amt="30">$30</button>
-      <button class="price-btn adjust" id="dec">−</button>
+    <div class="section-header">
+      <h2 class="section-title">Featured Albums</h2>
+      <a href="/browse.html" class="section-link">View all →</a>
     </div>
-    <div class="custom-row">
-      <span style="color:#555;font-size:1.2rem;">$</span>
-      <input type="number" id="customAmt" placeholder="Custom amount (min $5)" min="5" step="1">
+    <div class="featured-banner">
+      <div class="featured-art">🎵</div>
+      <div class="featured-info">
+        <div class="featured-label">Featured Release</div>
+        <div class="featured-title">LISTEN</div>
+        <div class="featured-artist">Snugsworth</div>
+        <div class="featured-price">Pay what you want • Digital download</div>
+      </div>
     </div>
-    <div class="cd-row">
-      <input type="checkbox" id="hasCD">
-      <label for="hasCD">Add CD mailed to you (+$15)</label>
+    <div class="album-grid" id="albumGrid">
+      <!-- Loaded via JS -->
+      <div style="color:#444;padding:2rem;">Loading albums...</div>
     </div>
-    <div class="email-row">
-      <label for="email">Your email</label>
-      <input type="email" id="email" placeholder="for download link + CD mailing">
-    </div>
-    <button class="submit-btn" id="stripeBtn">Buy — <span id="btnAmt">$5</span></button>
-    <div class="alt-header">— or send directly —</div>
-    <div class="alt-btns">
-      <a class="alt-btn cashapp-btn" id="cashappBtn" href="https://cash.app/$snugsworth" target="_blank">CashApp</a>
-      <a class="alt-btn" href="https://venmo.com/u/snugsworth" target="_blank">Venmo</a>
-    </div>
-    <p class="note">Download link emailed instantly after payment</p>
   </div>
 
-  <div class="footer">
-    &copy; 2026 Snugsworth &nbsp;·&nbsp; <a href="https://snugos.github.io/space" target="_blank">snugsworth.com</a>
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">Browse by Genre</h2>
+    </div>
+    <div class="categories">
+      <span class="category-tag active">All</span>
+      <span class="category-tag">Hip-Hop</span>
+      <span class="category-tag">R&B</span>
+      <span class="category-tag">Electronic</span>
+      <span class="category-tag">Pop</span>
+      <span class="category-tag">Jazz</span>
+      <span class="category-tag">Rock</span>
+      <span class="category-tag">Experimental</span>
+    </div>
+    <div class="album-grid" id="genreAlbumGrid">
+      <div style="color:#444;padding:2rem;">Select a genre to browse</div>
+    </div>
   </div>
+
+  <footer>
+    <p>Built on <a href="#">Zo Space</a> · Payments by <a href="#">Stripe</a></p>
+    <p style="margin-top:0.5rem;">© 2026 Music Marketplace</p>
+  </footer>
 
   <script>
-    const API = 'https://music-store-three-eta.vercel.app/api';
-    let amount = 5;
-
-    function $(id) { return document.getElementById(id); }
-    const priceBtns = document.querySelectorAll('.price-btn[data-amt]');
-    const customAmt = $('customAmt');
-    const emailEl = $('email');
-    const btnAmt = $('btnAmt');
-    const stripeBtn = $('stripeBtn');
-    const cashappBtn = $('cashappBtn');
-
-    function setAmount(n) {
-      amount = Math.max(5, n);
-      customAmt.value = amount === 5 ? '' : amount;
-      btnAmt.textContent = '$' + amount;
-      priceBtns.forEach(b => b.classList.toggle('selected', parseInt(b.dataset.amt) === amount));
-      cashappBtn.href = 'https://cash.app/$snugsworth/' + amount;
+    // Load featured albums
+    async function loadAlbums() {
+      const grid = document.getElementById('albumGrid');
+      try {
+        const res = await fetch('/api/albums?limit=6');
+        if (!res.ok) throw new Error('API not available yet');
+        const data = await res.json();
+        if (!data.albums || data.albums.length === 0) {
+          grid.innerHTML = '<div style="color:#444;padding:2rem;">No albums yet. <a href="/register.html" style="color:#888;">Be the first to sell!</a></div>';
+          return;
+        }
+        grid.innerHTML = data.albums.map(album => `
+          <a href="/album/${album.id}.html" class="album-card">
+            <div class="album-card-art">${album.cover_image_url ? '<img src="'+album.cover_image_url+'" style="width:100%;height:100%;object-fit:cover;">' : '🎵'}</div>
+            <div class="album-card-info">
+              <div class="album-card-title">${escapeHtml(album.title)}</div>
+              <div class="album-card-artist">${escapeHtml(album.artist_name)}</div>
+              <div class="album-card-price">${album.is_name_your_price ? 'Name your price' : '$' + (album.price_cents / 100).toFixed(2)}</div>
+            </div>
+          </a>
+        `).join('');
+      } catch (e) {
+        grid.innerHTML = '<div style="color:#444;padding:2rem;">Album listing coming soon. <a href="/register.html" style="color:#888;">List your music →</a></div>';
+      }
     }
 
-    priceBtns.forEach(btn => {
-      btn.addEventListener('click', () => setAmount(parseInt(btn.dataset.amt)));
-    });
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
 
-    $('dec').addEventListener('click', () => setAmount(amount - 1));
-    customAmt.addEventListener('input', () => {
-      const v = parseInt(customAmt.value);
-      if (v >= 5) setAmount(v);
-    });
+    loadAlbums();
 
-    stripeBtn.addEventListener('click', async () => {
-      const email = emailEl.value.trim();
-      const hasCD = $('hasCD').checked;
-      if (!email) return alert('Please enter your email address.');
-      if (amount < 5) return alert('Minimum donation is $5.');
-
-      stripeBtn.disabled = true;
-      stripeBtn.textContent = 'Redirecting...';
-
-      try {
-        const res = await fetch(API + '/checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount, email, hasCD }),
-        });
-        const data = await res.json();
-        if (data.url) window.location.href = data.url;
-        else alert('Error: ' + (data.error || 'Something went wrong'));
-      } catch(e) {
-        alert('Connection error. Please try again.');
-      } finally {
-        stripeBtn.disabled = false;
-        stripeBtn.textContent = 'Buy — ' + btnAmt.textContent;
-      }
+    // Category tag filtering
+    document.querySelectorAll('.category-tag').forEach(tag => {
+      tag.addEventListener('click', () => {
+        document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
+        tag.classList.add('active');
+        // TODO: filter albums by category
+      });
     });
   </script>
+
 </body>
 </html>

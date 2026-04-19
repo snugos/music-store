@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register as an Artist — Music Marketplace</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: inherit; text-decoration: none; }
+    
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; max-width: 900px; margin: 0 auto; width: 100%; }
+    .logo { font-size: 1.2rem; font-weight: 700; }
+    .logo span { color: #666; }
+    nav a { color: #888; font-size: 0.9rem; }
+    nav a:hover { color: #fff; }
+
+    .container { max-width: 480px; margin: 0 auto; padding: 3rem 2rem; flex: 1; }
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -0.03em; }
+    .subtitle { color: #666; margin-bottom: 2.5rem; line-height: 1.5; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-size: 0.8rem; color: #888; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    input, textarea { width: 100%; padding: 0.85rem 1rem; background: #111; border: 1.5px solid #222; border-radius: 8px; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.15s; }
+    input:focus, textarea:focus { border-color: #444; }
+    input::placeholder, textarea::placeholder { color: #444; }
+    textarea { resize: vertical; min-height: 100px; }
+    .hint { font-size: 0.75rem; color: #555; margin-top: 0.4rem; }
+    .hint.error { color: #e74c3c; }
+
+    .slug-preview { background: #0f0f0f; padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.85rem; color: #666; margin-top: 0.5rem; display: none; }
+    .slug-preview span { color: #888; }
+
+    button.submit { width: 100%; padding: 1rem; background: #fff; color: #000; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s; margin-top: 1rem; }
+    button.submit:hover { opacity: 0.85; }
+    button.submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .divider { display: flex; align-items: center; gap: 1rem; color: #333; font-size: 0.8rem; margin: 1.5rem 0; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #222; }
+
+    .alt-login { text-align: center; color: #555; font-size: 0.85rem; }
+    .alt-login a { color: #888; }
+    .alt-login a:hover { color: #fff; }
+
+    .success-view { display: none; text-align: center; padding: 2rem; }
+    .success-view h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+    .success-view p { color: #666; margin-bottom: 1.5rem; }
+    .success-view .check { font-size: 4rem; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">market<span>.place</span></a>
+    <a href="/login.html">Already have an account?</a>
+  </nav>
+
+  <div class="container">
+    <h1>Start Selling Music</h1>
+    <p class="subtitle">Create your storefront in minutes. No monthly fees, no platform cut — you keep 100% of your revenue.</p>
+
+    <!-- Step 1: Email -->
+    <div id="step1">
+      <div class="form-group">
+        <label for="email">Your email</label>
+        <input type="email" id="email" placeholder="artist@example.com">
+      </div>
+      <button class="submit" id="sendMagicBtn" onclick="sendMagicLink()">Send Magic Link</button>
+    </div>
+
+    <!-- Step 2: Profile -->
+    <div id="step2" style="display:none;">
+      <div class="form-group">
+        <label for="name">Artist / Band Name</label>
+        <input type="text" id="name" placeholder="Your name or band name">
+      </div>
+      <div class="form-group">
+        <label for="slug">Store URL</label>
+        <input type="text" id="slugInput" placeholder="your-name" oninput="updateSlugPreview()">
+        <p class="hint" id="slugHint">Only lowercase letters, numbers, and hyphens</p>
+        <div class="slug-preview" id="slugPreview">
+          market.place/artists/<span id="slugPreviewText"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="bio">Bio (optional)</label>
+        <textarea id="bio" placeholder="Tell fans about yourself..."></textarea>
+      </div>
+      <button class="submit" id="registerBtn" onclick="registerArtist()">Create My Store</button>
+    </div>
+
+    <!-- Success -->
+    <div id="successView" class="success-view">
+      <div class="check">✅</div>
+      <h2>You're all set!</h2>
+      <p>Check your email for the magic link to access your dashboard.</p>
+      <a href="/" class="submit" style="display:inline-block;text-decoration:none;">Back to Marketplace</a>
+    </div>
+
+    <div id="errorMsg" style="color:#e74c3c;font-size:0.85rem;margin-top:1rem;text-align:center;"></div>
+  </div>
+
+  <script>
+    const API = ''; // Will use relative paths for zo.space
+    let artistEmail = '';
+    let artistToken = '';
+
+    function updateSlugPreview() {
+      const val = document.getElementById('slugInput').value
+        .toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
+      document.getElementById('slugInput').value = val;
+      const preview = document.getElementById('slugPreview');
+      const previewText = document.getElementById('slugPreviewText');
+      if (val) {
+        preview.style.display = 'block';
+        previewText.textContent = val;
+      } else {
+        preview.style.display = 'none';
+      }
+      // Validate slug
+      const hint = document.getElementById('slugHint');
+      if (val.length > 0 && val.length < 3) {
+        hint.textContent = 'At least 3 characters required';
+        hint.className = 'hint error';
+      } else if (val.includes('--')) {
+        hint.textContent = 'No consecutive hyphens';
+        hint.className = 'hint error';
+      } else {
+        hint.textContent = 'Only lowercase letters, numbers, and hyphens';
+        hint.className = 'hint';
+      }
+    }
+
+    async function sendMagicLink() {
+      const email = document.getElementById('email').value.trim();
+      const btn = document.getElementById('sendMagicBtn');
+      const err = document.getElementById('errorMsg');
+      err.textContent = '';
+
+      if (!email) { err.textContent = 'Please enter your email'; return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      try {
+        const res = await fetch('/api/auth/magic-link', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, type: 'signup' })
+        });
+        const data = await res.json();
+        // For demo, proceed to step 2 (real implementation would wait for magic link confirmation)
+        artistEmail = email;
+        
+        // In production: show "check your email" message
+        // For demo purposes, we move to step 2 directly
+        document.getElementById('step1').style.display = 'none';
+        document.getElementById('step2').style.display = 'block';
+      } catch (e) {
+        err.textContent = 'Connection error. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Send Magic Link';
+      }
+    }
+
+    async function registerArtist() {
+      const name = document.getElementById('name').value.trim();
+      const slug = document.getElementById('slugInput').value.trim();
+      const bio = document.getElementById('bio').value.trim();
+      const btn = document.getElementById('registerBtn');
+      const err = document.getElementById('errorMsg');
+      err.textContent = '';
+
+      if (!name) { err.textContent = 'Artist name is required'; return; }
+      if (!slug || slug.length < 3) { err.textContent = 'URL must be at least 3 characters'; return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Creating...';
+
+      try {
+        const res = await fetch('/api/artists', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: artistEmail, name, slug, bio })
+        });
+        const data = await res.json();
+        
+        if (!res.ok) throw new Error(data.error || 'Registration failed');
+
+        document.getElementById('step2').style.display = 'none';
+        document.getElementById('successView').style.display = 'block';
+      } catch (e) {
+        err.textContent = e.message || 'Registration failed. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Create My Store';
+      }
+    }
+  </script>
+
+</body>
+</html>
