@@ -39,8 +39,8 @@
 <body>
 
   <nav>
-    <a href="/" class="logo">market<span>.place</span></a>
-    <a href="/register.html">Create account</a>
+    <a href="/music-store/" class="logo">market<span>.place</span></a>
+    <a href="/music-store/register.html">Create account</a>
   </nav>
 
   <div class="container">
@@ -55,7 +55,7 @@
     <div id="message"></div>
 
     <p class="note">
-      New here? <a href="/register.html">Create an artist account</a>
+      New here? <a href="/music-store/register.html">Create an artist account</a>
     </p>
   </div>
 
@@ -97,7 +97,7 @@
     if (urlParams.get('token')) {
       // Store token and redirect to dashboard
       localStorage.setItem('auth_token', urlParams.get('token'));
-      window.location.href = '/dashboard/';
+      window.location.href = '/music-store/dashboard/';
     }
   </script>
 

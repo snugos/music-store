@@ -69,7 +69,7 @@
   </div>
 
   <footer>
-    <p>Powered by <a href="/">Music Marketplace</a></p>
+    <p>Powered by <a href="/music-store/">Music Marketplace</a></p>
   </footer>
 
   <script>
@@ -132,7 +132,7 @@
         }
 
         grid.innerHTML = albums.map(album => `
-          <a href="/album/${album.id}.html" class="album-card">
+          <a href="/music-store/album/${album.id}.html" class="album-card">
             <div class="album-art">${album.cover_image_url ? `<img src="${escapeHtml(album.cover_image_url)}" alt="">` : '🎵'}</div>
             <div class="album-info">
               <div class="album-title">${escapeHtml(album.title)}</div>

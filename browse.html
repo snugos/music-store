@@ -51,12 +51,12 @@
 <body>
 
   <nav>
-    <a href="/" class="logo">market<span>.place</span></a>
+    <a href="/music-store/" class="logo">market<span>.place</span></a>
     <div class="nav-links">
-      <a href="/browse.html" style="color:#fff;">Browse</a>
-      <a href="/register.html">Sell Music</a>
+      <a href="/music-store/browse.html" style="color:#fff;">Browse</a>
+      <a href="/music-store/register.html">Sell Music</a>
     </div>
-    <a href="/login.html" class="nav-cta">Artist Login</a>
+    <a href="/music-store/login.html" class="nav-cta">Artist Login</a>
   </nav>
 
   <div class="page-header">
@@ -142,7 +142,7 @@
       }
 
       grid.innerHTML = filtered.map(album => `
-        <a href="/album/${album.id}.html" class="album-card">
+        <a href="/music-store/album/${album.id}.html" class="album-card">
           <div class="album-card-art">${album.cover_image_url ? '<img src="'+escapeHtml(album.cover_image_url)+'" alt="">' : '🎵'}</div>
           <div class="album-card-info">
             <div class="album-card-title">${escapeHtml(album.title)}</div>

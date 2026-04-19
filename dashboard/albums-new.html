@@ -82,18 +82,18 @@
     <aside class="sidebar">
       <div class="sidebar-logo">market<span>.place</span></div>
       <nav class="sidebar-nav">
-        <a href="/dashboard/" class="nav-item">📊 Overview</a>
-        <a href="/dashboard/albums.html" class="nav-item">💿 Albums</a>
-        <a href="/dashboard/albums-new.html" class="nav-item active">➕ New Album</a>
-        <a href="/dashboard/orders.html" class="nav-item">📦 Orders</a>
-        <a href="/dashboard/settings.html" class="nav-item">⚙️ Settings</a>
+        <a href="/music-store/dashboard/" class="nav-item">📊 Overview</a>
+        <a href="/music-store/dashboard/albums.html" class="nav-item">💿 Albums</a>
+        <a href="/music-store/dashboard/albums-new.html" class="nav-item active">➕ New Album</a>
+        <a href="/music-store/dashboard/orders.html" class="nav-item">📦 Orders</a>
+        <a href="/music-store/dashboard/settings.html" class="nav-item">⚙️ Settings</a>
       </nav>
     </aside>
 
     <main class="main">
       <div class="header">
         <h1>Create New Album</h1>
-        <a href="/dashboard/albums.html">← Back to Albums</a>
+        <a href="/music-store/dashboard/albums.html">← Back to Albums</a>
       </div>
 
       <form id="albumForm" onsubmit="handleSubmit(event)">
@@ -257,7 +257,7 @@
         };
 
         const token = localStorage.getItem('auth_token');
-        if (!token) { window.location.href = '/login.html'; return; }
+        if (!token) { window.location.href = '/music-store/login.html'; return; }
 
         // TODO: Upload cover image first, get URL, then create album
         const res = await fetch('/api/albums', {
@@ -273,7 +273,7 @@
         msg.className = 'success';
         btn.textContent = 'Created!';
         
-        setTimeout(() => { window.location.href = '/dashboard/albums.html'; }, 1500);
+        setTimeout(() => { window.location.href = '/music-store/dashboard/albums.html'; }, 1500);
       } catch (e) {
         msg.textContent = e.message || 'Error creating album';
         msg.className = 'error';

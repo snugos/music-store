@@ -84,22 +84,22 @@
     <aside class="sidebar">
       <div class="sidebar-logo">market<span>.place</span></div>
       <nav class="sidebar-nav">
-        <a href="/dashboard/" class="nav-item active">
+        <a href="/music-store/dashboard/" class="nav-item active">
           <span class="icon">📊</span> Overview
         </a>
-        <a href="/dashboard/albums.html" class="nav-item">
+        <a href="/music-store/dashboard/albums.html" class="nav-item">
           <span class="icon">💿</span> Albums
         </a>
-        <a href="/dashboard/albums-new.html" class="nav-item">
+        <a href="/music-store/dashboard/albums-new.html" class="nav-item">
           <span class="icon">➕</span> New Album
         </a>
-        <a href="/dashboard/orders.html" class="nav-item">
+        <a href="/music-store/dashboard/orders.html" class="nav-item">
           <span class="icon">📦</span> Orders
         </a>
-        <a href="/dashboard/settings.html" class="nav-item">
+        <a href="/music-store/dashboard/settings.html" class="nav-item">
           <span class="icon">⚙️</span> Settings
         </a>
-        <a href="/" class="nav-item">
+        <a href="/music-store/" class="nav-item">
           <span class="icon">←</span> Back to Store
         </a>
       </nav>
@@ -109,7 +109,7 @@
       <div class="header">
         <h1>Dashboard</h1>
         <div class="header-actions">
-          <a href="/dashboard/albums-new.html" class="btn btn-primary">+ New Album</a>
+          <a href="/music-store/dashboard/albums-new.html" class="btn btn-primary">+ New Album</a>
         </div>
       </div>
 
@@ -147,7 +147,7 @@
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">Your Albums</h2>
-          <a href="/dashboard/albums.html" class="card-link">View all →</a>
+          <a href="/music-store/dashboard/albums.html" class="card-link">View all →</a>
         </div>
         <div class="album-list" id="albumList">
           <div style="color:#444;padding:1rem;">Loading...</div>
@@ -158,7 +158,7 @@
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">Recent Orders</h2>
-          <a href="/dashboard/orders.html" class="card-link">View all →</a>
+          <a href="/music-store/dashboard/orders.html" class="card-link">View all →</a>
         </div>
         <table class="orders-table">
           <thead>
@@ -185,7 +185,7 @@
     async function loadDashboard() {
       // Check auth
       const token = localStorage.getItem('auth_token');
-      if (!token) { window.location.href = '/login.html'; return; }
+      if (!token) { window.location.href = '/music-store/login.html'; return; }
 
       try {
         // Load artist data
@@ -209,7 +209,7 @@
         loadStats();
       } catch (e) {
         localStorage.removeItem('auth_token');
-        window.location.href = '/login.html';
+        window.location.href = '/music-store/login.html';
       }
     }
 
@@ -226,12 +226,12 @@
 
         const list = document.getElementById('albumList');
         if (albums.length === 0) {
-          list.innerHTML = '<div style="color:#444;padding:1rem;">No albums yet. <a href="/dashboard/albums-new.html" style="color:#888;">Create your first album →</a></div>';
+          list.innerHTML = '<div style="color:#444;padding:1rem;">No albums yet. <a href="/music-store/dashboard/albums-new.html" style="color:#888;">Create your first album →</a></div>';
           return;
         }
 
         list.innerHTML = albums.slice(0, 5).map(album => `
-          <a href="/dashboard/albums-edit.html?id=${album.id}" class="album-item">
+          <a href="/music-store/dashboard/albums.html?id=${album.id}" class="album-item">
             <div class="album-thumb">${album.cover_image_url ? '<img src="'+album.cover_image_url+'" alt="">' : '💿'}</div>
             <div class="album-info">
               <div class="album-name">${escapeHtml(album.title)}</div>

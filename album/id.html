@@ -75,8 +75,8 @@
 <body>
 
   <nav>
-    <a href="/" class="logo">market<span>.place</span></a>
-    <a href="/browse.html">← Browse</a>
+    <a href="/music-store/" class="logo">market<span>.place</span></a>
+    <a href="/music-store/browse.html">← Browse</a>
   </nav>
 
   <div class="container">
@@ -86,7 +86,7 @@
 
     <div class="album-info-section">
       <div class="breadcrumb" id="breadcrumb">
-        <a href="/browse.html">Browse</a> / <span id="breadcrumbArtist">Loading...</span>
+        <a href="/music-store/browse.html">Browse</a> / <span id="breadcrumbArtist">Loading...</span>
       </div>
       <h1 class="album-title" id="albumTitle">Loading...</h1>
       <div class="artist-name" id="artistName">Loading...</div>
@@ -147,8 +147,8 @@
 
         // Info
         document.getElementById('albumTitle').textContent = albumData.title;
-        document.getElementById('artistName').innerHTML = `<a href="/artist/${escapeHtml(albumData.artist_slug)}.html">${escapeHtml(albumData.artist_name)}</a>`;
-        document.getElementById('breadcrumbArtist').innerHTML = `<a href="/artist/${escapeHtml(albumData.artist_slug)}.html">${escapeHtml(albumData.artist_name)}</a>`;
+        document.getElementById('artistName').innerHTML = `<a href="/music-store/artist/${escapeHtml(albumData.artist_slug)}.html">${escapeHtml(albumData.artist_name)}</a>`;
+        document.getElementById('breadcrumbArtist').innerHTML = `<a href="/music-store/artist/${escapeHtml(albumData.artist_slug)}.html">${escapeHtml(albumData.artist_name)}</a>`;
 
         // Meta
         const meta = document.getElementById('albumMeta');

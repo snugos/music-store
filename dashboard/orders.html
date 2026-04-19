@@ -48,11 +48,11 @@
     <aside class="sidebar">
       <div class="sidebar-logo">market<span>.place</span></div>
       <nav class="sidebar-nav">
-        <a href="/dashboard/" class="nav-item">📊 Overview</a>
-        <a href="/dashboard/albums.html" class="nav-item">💿 Albums</a>
-        <a href="/dashboard/albums-new.html" class="nav-item">➕ New Album</a>
-        <a href="/dashboard/orders.html" class="nav-item active">📦 Orders</a>
-        <a href="/dashboard/settings.html" class="nav-item">⚙️ Settings</a>
+        <a href="/music-store/dashboard/" class="nav-item">📊 Overview</a>
+        <a href="/music-store/dashboard/albums.html" class="nav-item">💿 Albums</a>
+        <a href="/music-store/dashboard/albums-new.html" class="nav-item">➕ New Album</a>
+        <a href="/music-store/dashboard/orders.html" class="nav-item active">📦 Orders</a>
+        <a href="/music-store/dashboard/settings.html" class="nav-item">⚙️ Settings</a>
       </nav>
     </aside>
     <main class="main">
@@ -86,7 +86,7 @@
   </div>
   <script>
     const token = localStorage.getItem('auth_token');
-    if (!token) { window.location.href = '/login.html'; }
+    if (!token) { window.location.href = '/music-store/login.html'; }
 
     async function loadOrders() {
       try {
